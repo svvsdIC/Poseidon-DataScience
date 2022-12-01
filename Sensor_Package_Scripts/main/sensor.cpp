@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 void readSensor(int sensorI2CAddress, int delayTime) {
     char cmd[] = "r\n"; // 
 

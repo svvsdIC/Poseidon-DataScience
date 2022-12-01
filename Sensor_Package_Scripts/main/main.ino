@@ -1,14 +1,15 @@
 #include <Wire.h>
-#include <Math.h>
+#include <Arduino.h>
+#include "sensor.cpp"
 
-void setup {
-
-}
-
-void loop {
+void setup() {
 
 }
 
-void serialEvent {
+void loop() {
+
+}
+
+void serialEvent() {
 
 }
