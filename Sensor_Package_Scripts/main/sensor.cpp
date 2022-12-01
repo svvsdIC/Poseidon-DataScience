@@ -1,5 +1,5 @@
 void readSensor(int sensorI2CAddress, int delayTime) {
-    char cmd[] = "r\n"; // 
+    char cmd[] = {'r', '\0'}; // 
 
     Wire.beginTransmission(sensorI2CAddress);                          // call the circuit by its ID number.
     Wire.write( cmd );                                                     //transmit the command that was sent through the serial port.
