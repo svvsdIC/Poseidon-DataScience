@@ -1,6 +1,7 @@
-#include <Wire.h>
 #include <Arduino.h>
-#include "sensor.cpp"
+#include "sensor.h"
+
+
 
 void setup() {
 

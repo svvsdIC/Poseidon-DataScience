@@ -1,3 +1,6 @@
+#include <Wire.h>
+#include <Arduino.h>
+
 void readSensor(int sensorI2CAddress, int delayTime) {
     char cmd[] = {'r', '\0'}; // 
 
@@ -37,6 +40,6 @@ void readSensor(int sensorI2CAddress, int delayTime) {
         sensorData[i] = in_char;					      //load this byte into our array.                         		//incur the counter for the array element.
     }
 
-    Serial.println(sensorData);             // print the data.
+    Serial.println(sensorData);             // TODO: switch from print to  return
 
 }
