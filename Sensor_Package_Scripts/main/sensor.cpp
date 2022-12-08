@@ -11,7 +11,7 @@ void readSensor(int sensorI2CAddress, int delayTime) {
     delay(delayTime); // wait the correct amount of time for the circuit to complete its instruction.
 
     Wire.requestFrom(sensorI2CAddress, 20, 1);                                    // call the circuit and request 20 bytes (this may be more than we need)
-    int responseCode = Wire.read();               		                                      //the first byte is the response code, we read this separately.
+    int responseCode = Wire.read();               		         //the first byte is the response code, we read this separately.
 
     switch (responseCode)
     {                                       // switch case based on what the response code is.
@@ -42,4 +42,9 @@ void readSensor(int sensorI2CAddress, int delayTime) {
 
     Serial.println(sensorData);             // TODO: switch from print to  return
 
+}
+
+void initSensors() {
+    
+    Wire.begin();
 }
