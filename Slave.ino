@@ -3,23 +3,36 @@
 
 #include "Wire.h"
 
+// declare functions 
 void receiveEvent(int howMany);
 void requestEvent();
+void ORP_handler(char* command);
+void pH_handler(char* command);
+void EC_handler(char* command);
+void DO_handler(char* command);
+void RTD_handler(char* command);
 
-#define SLAVE_ADDRESS (1)
+#define SLAVE_ADDRESS (1)     // using modified twi.c can use any address here
 #define SENSOR_DATA_SIZE 50
 
 volatile byte rcvBuf[20]; // buffer for data from master
 String sensorData = String("");
 
+enum expected_i2c_addresses {
+  ORP =  98,
+  pH  =  99,
+  EC  = 100,
+  DO  =  97,
+  RTD = 102
+};
+
 void setup() {
 
-  Wire.begin(SLAVE_ADDRESS);     // join i2c bus with address
-  //TWAMR = (98 | 99 | 97 | 100 | 102 ) << 1;
+  Wire.begin(SLAVE_ADDRESS);      // start the i2c bus
   Wire.onReceive(receiveEvent);   // register handler for data from master
   Wire.onRequest(requestEvent);   // register handler for master requests
   
-  Serial.begin(9600);  // start serial for output
+  Serial.begin(115200);           // start serial for output
   Serial.println("client...");
   
   Serial.println();
@@ -61,28 +74,69 @@ void receiveEvent(int howMany) {
 // function that executes whenever data is requested by master.
 // this function is registered as an event, see setup()
 void requestEvent(){
-  char myBuf[50];
-  
-  strcpy(myBuf,rcvBuf);
-  if(strcmp(rcvBuf,"r")==0){  // read sensor data  
-      byte response[SENSOR_DATA_SIZE];
-      for (byte i = 0; i < SENSOR_DATA_SIZE; i++) {
-        response[i] = (byte)sensorData.charAt(i);
-      }
-      Wire.write(1);    //  return code for 'successb
-      for(int i=0; i<SENSOR_DATA_SIZE;i++){
-        Wire.write(response[i]);
-      }
-      Serial.print("client ");Serial.print(twi_TWAR);Serial.print(" sent:  ");Serial.println(sensorData);
-      Serial.println();
-      return;      
-  }else if( strcmp(rcvBuf,"find")==0){
-    Wire.write(1); //return code for 'success'
-    Wire.write('\0');
-    Serial.println("start flashing");
-  }else{
-    Wire.write(2);  //return code for 'syntax error'
-    Wire.write('\0');
+  char myBuf[50] = "";
+  strncpy(myBuf, rcvBuf, 50);
+
+  switch (twi_TWAR){
+	case ORP:
+		ORP_handler(myBuf);
+    
+		break;
+
+	case pH:
+		pH_handler(myBuf);
+		break;
+
+	case EC:
+		EC_handler(myBuf);
+		break;
+
+	case DO:
+		DO_handler(myBuf);
+		break;
+
+	case RTD:
+		RTD_handler(myBuf);
+		break;
+ 
+  default:
+    // do nothing
+    Serial.print("unknown i2c address received: ");Serial.println(twi_TWAR);
 
   }
+  
+}
+
+void sendResponse(char* response){
+
+    int respLen = strlen(response);
+    Wire.write(1);    //  return code for 'successb
+    for(int i=0; i<=respLen;i++){
+      Wire.write(response[i]);
+    }
+    Wire.write('0');
+    Serial.print("client ");Serial.print(twi_TWAR);Serial.print(" sent:  ");Serial.println(response);
+    Serial.println();
+}
+
+// specific Atlas Sensor handlers
+
+void ORP_handler(char* command){
+    sendResponse("ORP");
+}
+
+void pH_handler(char* command){
+    sendResponse("pH");
+}
+
+void EC_handler(char* command){
+    sendResponse("EC");
+}
+
+void DO_handler(char* command){
+    sendResponse("DO");
+}
+
+void RTD_handler(char* command){
+    sendResponse("RTD");
 }
