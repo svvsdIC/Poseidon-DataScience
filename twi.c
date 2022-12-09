@@ -71,6 +71,8 @@ static volatile uint8_t twi_rxBufferIndex;
 
 static volatile uint8_t twi_error;
 
+extern volatile uint8_t twi_TWAR;   // make slave reqest address available in onRequest handler
+
 /* 
  * Function twi_init
  * Desc     readys twi pins and sets twi bitrate
@@ -128,6 +130,7 @@ void twi_setAddress(uint8_t address)
 {
   // set twi slave address (skip over TWGCE bit)
   TWAR = address << 1;
+  TWAMR = 0xff << 1;	// use mask to allow any slave address 
 }
 
 /* 
@@ -502,6 +505,9 @@ bool twi_manageTimeoutFlag(bool clear_flag){
 
 ISR(TWI_vect)
 {
+  
+  twi_TWAR = TWDR >> 1;     // capture address from i2c bus and make
+                            // it available via extern variable 
   switch(TW_STATUS){
     // All Master
     case TW_START:     // sent start condition
