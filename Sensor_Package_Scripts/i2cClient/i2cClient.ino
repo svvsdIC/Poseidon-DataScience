@@ -13,9 +13,8 @@ void DO_handler(char* command);
 void RTD_handler(char* command);
 
 #define SLAVE_ADDRESS (1)     // using modified twi.c can use any address here
-#define SENSOR_DATA_SIZE 50
 
-volatile byte rcvBuf[20]; // buffer for data from master
+volatile char rcvBuf[20];     // buffer for data from master
 String sensorData = String("");
 
 enum expected_i2c_addresses {
@@ -32,7 +31,7 @@ void setup() {
   Wire.onReceive(receiveEvent);   // register handler for data from master
   Wire.onRequest(requestEvent);   // register handler for master requests
   
-  Serial.begin(115200);           // start serial for output
+  Serial.begin(9600);           // start serial for output
   Serial.println("client...");
   
   Serial.println();
@@ -66,7 +65,7 @@ void receiveEvent(int howMany) {
   }    
   rcvBuf[ howMany ] = '\0';    // make it a null terminated C string
     char myBuf[howMany + 1];
-    strcpy(myBuf,rcvBuf); // can't print a volitile string
+    strcpy(myBuf, rcvBuf); // can't print a volitile string
     Serial.print("Client  received:  ");Serial.println(myBuf);
 }
 
