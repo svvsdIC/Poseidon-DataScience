@@ -26,6 +26,7 @@ float sat_float; // float var used to hold the float value of the percent satura
 void setup() {
     Serial.begin(9600);
     initSensors();
+    Serial.println("type something so call readSensor ");
 }
 
 void serialEvent() {                                                                         // this interrupt will trigger when the data coming from the serial monitor(pc/mac/other) is received.
