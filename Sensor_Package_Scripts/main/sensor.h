@@ -3,5 +3,6 @@
 
 
 void readSensor(int sensorI2CAddress, int delayTime);
+void initSensors();
 
 #endif // #ifndef __SENSOR_H
