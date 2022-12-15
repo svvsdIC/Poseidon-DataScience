@@ -17,6 +17,13 @@ byte in_char = 0;                // used as a 1 byte buffer to store inbound byt
 byte i = 0;                      // counter used for DO_data array.
 int time_ = 575;                 // used to change the delay needed depending on the command sent to the EZO Class DO Circuit.
 
+/*
+struct sensor {
+    int delayTime;
+    
+}
+*/
+
 char *DO;  // char pointer used in string parsing.
 char *sat; // char pointer used in string parsing.
 
