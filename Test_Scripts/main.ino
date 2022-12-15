@@ -20,6 +20,33 @@
 [] Local data storage
 */
 
+/* Address - I2C bus adress
+eadDelay - duration 
+sensorName - 3 character name of the sensor
+*/
+
+enum sensorNames {
+    oxygenReduction,
+    ph,
+    dissolvedOxygen,
+    electricalConductivity,
+    temperature
+};
+
+    struct AtlasSensor
+{
+    int address;
+    int readDelayMS;
+    String sensorName;
+};
+AtlasSensor sensor[] = {
+    {98, 815, "OR"},
+    {99, 815, "pH"},
+    {97, 575, "DO"},
+    {100, 570, "EC"},
+    {102, 600, "RT"}
+    }; 
+
 void setup() {
     Serial.begin(9600);
     Serial.println("Serial Initialized");
@@ -27,6 +54,6 @@ void setup() {
 }
 
 void loop() {
-    readSensor( 102, 800);
+    readSensor(102, 800);
     delay(5000);
 }
