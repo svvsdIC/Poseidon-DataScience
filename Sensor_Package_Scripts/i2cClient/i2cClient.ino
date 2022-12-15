@@ -1,5 +1,8 @@
-// this is an i2c buss client (aka slave)
-// it imitates an ATLAS SENSORl
+// this is an i2c bus client (aka slave)
+// it imitates a collection of ATLAS SENSORS
+//
+// It uses modified Wire.c twi.c modules to allow the reception of
+// multiple i2c address
 
 #include "Wire.h"
 
@@ -31,7 +34,7 @@ void setup() {
   Wire.onReceive(receiveEvent);   // register handler for data from master
   Wire.onRequest(requestEvent);   // register handler for master requests
   
-  Serial.begin(9600);           // start serial for output
+  Serial.begin(9600);             // start serial for output
   Serial.println("client...");
   
   Serial.println();
@@ -43,6 +46,7 @@ void setup() {
 
 void loop() {
   // blink the led to show where the chip is if 'find' command
+  // this command is foudn on all ATLAS sensors
   if(strcmp( rcvBuf, "find")==0){
     digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
     delay(500);
