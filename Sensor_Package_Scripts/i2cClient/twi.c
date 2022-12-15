@@ -71,7 +71,7 @@ static volatile uint8_t twi_rxBufferIndex;
 
 static volatile uint8_t twi_error;
 
-extern volatile uint8_t twi_TWAR;   // make slave reqest address available in onRequest handler
+volatile uint8_t twi_TWAR;   // make slave reqest address available in onRequest handler
 
 /* 
  * Function twi_init

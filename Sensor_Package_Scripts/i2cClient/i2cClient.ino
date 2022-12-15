@@ -55,7 +55,8 @@ void loop() {
   sensorData = String(( sin(millis()/100 ) * 10) + 40.0); 
 }        
 
-volatile uint8_t twi_TWAR = -8;
+extern volatile uint8_t twi_TWAR;  // in twi.c, this gets the i2c address
+								   // used to issue a request for data
 
 // function that executes whenever data is received from master
 // this function is registered as an event, see setup()
