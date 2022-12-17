@@ -18,7 +18,6 @@ void RTD_handler(char* command);
 #define SLAVE_ADDRESS (1)     // using modified twi.c can use any address here
 
 volatile char rcvBuf[20];     // buffer for data from master
-String sensorData = String("");
 
 enum expected_i2c_addresses {
   ORP =  98,
@@ -35,7 +34,7 @@ void setup() {
   Wire.onRequest(requestEvent);   // register handler for master requests
   
   Serial.begin(9600);             // start serial for output
-  Serial.println("client...");
+  Serial.println("client....");
   
   Serial.println();
   
@@ -56,7 +55,6 @@ void loop() {
   }
 
   // calculate a sensor value
-  sensorData = String(( sin(millis()/100 ) * 10) + 40.0); 
 }        
 
 extern volatile uint8_t twi_TWAR;  // in twi.c, this gets the i2c address
@@ -142,5 +140,18 @@ void DO_handler(char* command){
 }
 
 void RTD_handler(char* command){
-    sendResponse("RTD");
+  if(command[0]=='r'){
+    // request to read data
+
+    // calculate a simulated celcius temperature between 15 and 35 
+    // that varies slowly
+    float sensorDataFloat =( abs(sin(millis()/2000)) * 20) + 15;
+
+    // convert it from float to char{}
+    char sensorData[20];
+    dtostrf(sensorDataFloat,7,2,sensorData);
+
+    // return it to the controller over the i2c bus
+    sendResponse(sensorData);
+  }
 }
