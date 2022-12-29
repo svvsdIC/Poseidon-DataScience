@@ -13,5 +13,5 @@ It modifies twi.c so that on a request for data it captures the i2c address
 used by the i2c controller, and makes it available to a caller via the
 "extern uint8_t twi_TWAR;" variable. Thus it is available to the i2cClient.ino function registered with the Wire.onrequest method.
 
-
+It has been setup to respond to i2c addresses of several ATLAS Sensors, with simulated values when asked to return sensor values.
 
