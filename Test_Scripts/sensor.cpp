@@ -43,13 +43,17 @@ char *readSensor(AtlasSensor sensor) {
     #define MAX_SENSOR_DATA (20)
     char sensorData[MAX_SENSOR_DATA];
     
-    for (int i = 0; Wire.available(); i++) {         		//are there bytes to receive.
-        byte in_char = Wire.read();           		//receive a byte.
-        sensorData[i] = in_char;					      //load this byte into our array.                         		//incur the counter for the array element.
+    for (int i = 0; Wire.available(); i++) {
+        byte in_char = Wire.read();
+        sensorData[i] = in_char;
     }
-    static char *returnData = sensorData;
-    return returnData;             // TODO: switch from print to  return
 
+    // this has a memory leak.  maybe we should use std::string?  I have only seen people reccomending this over deallocating the memory back in main.  
+
+    /*char *returnData = new char[MAX_SENSOR_DATA];
+    strcpy(returnData, sensorData);
+    return *returnData;   */      
+    Serial.println(sensorData);    
 }
 
 void initSensors() {
