@@ -1,9 +1,16 @@
 #include <Arduino.h>
 #include <Wire.h>
+#include "sensor.h"
 
 
-void readSensor(int sensorI2CAddress, int delayTime) {
-    char cmd[] = {'r', '\0'}; // 
+void readSensor(AtlasSensor sensor) {
+
+
+
+    int sensorI2CAddress = sensor.address;
+    unsigned long delayTime = sensor.readDelayMS;
+
+    char cmd[] = {'r', '\0'};
 
     Wire.beginTransmission(sensorI2CAddress);                          // call the circuit by its ID number.
     Wire.write( cmd );                                                     //transmit the command that was sent through the serial port.

@@ -1,8 +1,23 @@
 #ifndef __SENSOR_H
 #define __SENSOR_H
 
+enum sensorNames
+{
+    oxygenReduction,
+    ph,
+    dissolvedOxygen,
+    electricalConductivity,
+    temperature
+};
 
-void readSensor(int sensorI2CAddress, int delayTime);
+struct AtlasSensor
+{
+    int address;
+    unsigned long readDelayMS;
+    String sensorName;
+};
+
+void readSensor(AtlasSensor sensor);
 void initSensors();
 
 #endif // #ifndef __SENSOR_H
