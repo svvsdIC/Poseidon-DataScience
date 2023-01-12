@@ -3,7 +3,7 @@
 #include "sensor.h"
 
 
-void readSensor(AtlasSensor sensor) {
+char *readSensor(AtlasSensor sensor) {
 
 
 
@@ -47,8 +47,8 @@ void readSensor(AtlasSensor sensor) {
         byte in_char = Wire.read();           		//receive a byte.
         sensorData[i] = in_char;					      //load this byte into our array.                         		//incur the counter for the array element.
     }
-
-    Serial.println(sensorData);             // TODO: switch from print to  return
+    static char *returnData = sensorData;
+    return returnData;             // TODO: switch from print to  return
 
 }
 
