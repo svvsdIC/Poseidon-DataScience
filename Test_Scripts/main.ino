@@ -40,7 +40,7 @@ void setup() {
 }
 
 void loop() {
-    readSensor(sensors[temperature]);
+    Serial.println(readSensor(sensors[temperature]));
     delay(5000);
 
 }

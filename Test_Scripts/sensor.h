@@ -17,7 +17,7 @@ struct AtlasSensor
     String sensorName;
 };
 
-void readSensor(AtlasSensor sensor);
+float readSensor(AtlasSensor sensor);
 void initSensors();
 
 #endif // #ifndef __SENSOR_H

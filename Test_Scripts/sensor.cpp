@@ -3,7 +3,7 @@
 #include "sensor.h"
 
 
-void readSensor(AtlasSensor sensor) {
+float readSensor(AtlasSensor sensor) {
 
 
 
@@ -53,7 +53,7 @@ void readSensor(AtlasSensor sensor) {
     /*char *returnData = new char[MAX_SENSOR_DATA];
     strcpy(returnData, sensorData);
     return *returnData;   */      
-    Serial.println(sensorData);    
+    return atof(sensorData);
 }
 
 void initSensors() {
