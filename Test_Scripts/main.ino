@@ -33,6 +33,9 @@ AtlasSensor sensors[] = {
     {102, 600, "RT"}
 };
 
+char serialCommands[20];
+int currentByte = 0;
+
 void setup() {
     Serial.begin(9600);
     Serial.println("Serial Initialized");
@@ -42,12 +45,20 @@ void setup() {
 void loop() {
 
 
-    for (int i = 0; i < 5; i++) {
+    /*for (int i = 0; i < 5; i++) {
         Serial.print(sensors[i].sensorName);
         Serial.print(": ");
         Serial.println(readSensor(sensors[i]));
 
         delay(2500);
-    }
+    }*/
 
+
+}
+
+void serialEvent() {
+    while(Serial.available()) {
+        serialCommands[currentByte] = Serial.read();
+        currentByte++;
+    }
 }
