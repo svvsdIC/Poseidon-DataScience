@@ -21,7 +21,7 @@ float readSensor(AtlasSensor sensor) {
     Wire.requestFrom(sensorI2CAddress, 20, 1);                                    // call the circuit and request 20 bytes (this may be more than we need)
     int responseCode = Wire.read();               		         //the first byte is the response code, we read this separately.
 
-    switch (responseCode)
+    /* switch (responseCode)
     {                                       // switch case based on what the response code is.
     case 1:                         		//decimal 1.
         Serial.println("Success");    		//means the command was successful.
@@ -39,7 +39,7 @@ float readSensor(AtlasSensor sensor) {
         Serial.println("No Data");    		//means there is no further data to send.
         break;                        		//exits the switch case.
     }
-   
+   */
     #define MAX_SENSOR_DATA (20)
     char sensorData[MAX_SENSOR_DATA];
     
