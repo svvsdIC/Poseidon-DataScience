@@ -20,12 +20,16 @@
 [] Local data storage
 */
 
-/* address - I2C bus adress
-readDelayMS - duration of read delay in milliseconds
-sensorName - 3 character name of the sensor
-*/
-
 AtlasSensor sensors[] = {
+
+    /*
+    {address, readDelayMS, sensorName}
+    
+    address - I2C bus adress
+    readDelayMS - duration of read delay in milliseconds
+    sensorName - 3 character name of the sensor
+    */
+
     {98, 815, "OR"},
     {99, 815, "pH"},
     {97, 575, "DO"},
@@ -33,9 +37,9 @@ AtlasSensor sensors[] = {
     {102, 600, "RT"}
 };
 
-char serialCommands[20];
+char serialCommand[20];
 int currentByte = 0;
-bool commandReceived = false;
+bool serialCommandReceived = false;
 
 void setup() {
     Serial.begin(9600);
@@ -45,10 +49,11 @@ void setup() {
 
 void loop() {
 
-    if(commandReceived) {
+    if(serialCommandReceived) {
         // follow command
-        commandReceived = false;
+        serialCommandReceived = false;
     }
+
     /*for (int i = 0; i < 5; i++) {
         Serial.print(sensors[i].sensorName);
         Serial.print(": ");
@@ -62,8 +67,8 @@ void loop() {
 
 void serialEvent() { // called after loop() when there is data in the buffer
     while(Serial.available()) {
-        serialCommands[currentByte] = Serial.read();
+        serialCommand[currentByte] = Serial.read();
         currentByte++;
     }
-    commandReceived = true;
+    serialCommandReceived = true;
 }
