@@ -35,6 +35,7 @@ AtlasSensor sensors[] = {
 
 char serialCommands[20];
 int currentByte = 0;
+bool commandReceived = false;
 
 void setup() {
     Serial.begin(9600);
@@ -44,7 +45,10 @@ void setup() {
 
 void loop() {
 
-
+    if(commandReceived) {
+        // follow command
+        commandReceived = false;
+    }
     /*for (int i = 0; i < 5; i++) {
         Serial.print(sensors[i].sensorName);
         Serial.print(": ");
@@ -56,9 +60,10 @@ void loop() {
 
 }
 
-void serialEvent() {
+void serialEvent() { // called after loop() when there is data in the buffer
     while(Serial.available()) {
         serialCommands[currentByte] = Serial.read();
         currentByte++;
     }
+    commandReceived = true;
 }
