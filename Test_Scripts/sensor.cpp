@@ -3,7 +3,7 @@
 #include "sensor.h"
 
 
-float readSensor(AtlasSensor sensor) {
+void readSensor(AtlasSensor sensor) {
 
 
 
@@ -48,12 +48,13 @@ float readSensor(AtlasSensor sensor) {
         sensorData[i] = in_char;
     }
 
-    // this has a memory leak.  maybe we should use std::string?  I have only seen people reccomending this over deallocating the memory back in main.  
 
     /*char *returnData = new char[MAX_SENSOR_DATA];
     strcpy(returnData, sensorData);
     return *returnData;   */      
-    return atof(sensorData);
+    //return atof(sensorData);
+
+    Serial.println(sensorData);
 }
 
 void initSensors() {

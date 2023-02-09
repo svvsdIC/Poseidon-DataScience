@@ -8,6 +8,7 @@
 [] low power mode - deep sleep
 [] detect sensor error condition
 [] onboard logging
+    [] look at built-in sensor storage
 [] stream live data
 [] instruct single read
 [] Current/voltage measurement
@@ -24,22 +25,23 @@ AtlasSensor sensors[] = {
 
     /*
     {address, readDelayMS, sensorName}
-    
+
     address - I2C bus adress
     readDelayMS - duration of read delay in milliseconds
     sensorName - 3 character name of the sensor
     */
 
-    {98, 815, "OR"},
-    {99, 815, "pH"},
-    {97, 575, "DO"},
-    {100, 570, "EC"},
-    {102, 600, "RT"}
+    {98, 815, "OR"},/* [status][ascii encoded signed float mV] */
+    {99, 815, "pH"}, /* [status][ascii encoded floating point pH][null] */
+    {97, 575, "DO"}, /* [status][ascii encoded float mg / L][null] */
+    {100, 1000, "EC"}, /* [status][ascii encoded float μS / cm; comma between 1000s place][null] */
+    {102, 600, "RT"}  /* [status][ascii encoded float (3 decimals) celsius][null] */
 };
 
 char serialCommand[20];
 int currentByte = 0;
 bool serialCommandReceived = false;
+
 
 void setup() {
     Serial.begin(9600);
@@ -53,7 +55,7 @@ void loop() {
         // follow command
         serialCommandReceived = false;
     }
-
+    readSensor(sensors[electricalConductivity]);
     /*for (int i = 0; i < 5; i++) {
         Serial.print(sensors[i].sensorName);
         Serial.print(": ");
