@@ -34,7 +34,7 @@ AtlasSensor sensors[] = {
     {98, 815, "OR"},/* [status][ascii encoded signed float mV] */
     {99, 815, "pH"}, /* [status][ascii encoded floating point pH][null] */
     {97, 575, "DO"}, /* [status][ascii encoded float mg / L][null] */
-    {100, 1000, "EC"}, /* [status][ascii encoded float μS / cm; comma between 1000s place][null] */
+    {100, 1000, "EC"}, /* [status][ascii encoded float μS / cm; comma between 1000s place?][null] */
     {102, 600, "RT"}  /* [status][ascii encoded float (3 decimals) celsius][null] */
 };
 
@@ -55,7 +55,11 @@ void loop() {
         // follow command
         serialCommandReceived = false;
     }
+
+
     readSensor(sensors[electricalConductivity]);
+
+
     /*for (int i = 0; i < 5; i++) {
         Serial.print(sensors[i].sensorName);
         Serial.print(": ");
