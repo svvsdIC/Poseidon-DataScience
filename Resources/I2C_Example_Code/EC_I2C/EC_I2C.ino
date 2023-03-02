@@ -36,6 +36,7 @@ void setup()                     //hardware initialization.
 {
   Serial.begin(9600);            //enable serial port.
   Wire.begin();                  //enable I2C port.
+  Serial.println("Sucess");
 }
 
 

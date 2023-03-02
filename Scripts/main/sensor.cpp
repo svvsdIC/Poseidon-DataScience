@@ -40,26 +40,34 @@ void readSensor(AtlasSensor sensor) {
         break;                        		//exits the switch case.
     }
    
-    #define MAX_SENSOR_DATA (20)
+    #define MAX_SENSOR_DATA (32)
     char sensorData[MAX_SENSOR_DATA];
+    
+    byte in_char = 0xff;
+
     
     for (int i = 0; Wire.available(); i++) {
         byte in_char = Wire.read();
         sensorData[i] = in_char;
         Serial.print(in_char);
+        if(in_char == 0x00) {
+            break;
+        }
         Serial.print(", ");
     }
-    Serial.println("\n");
+    
 
     /*char *returnData = new char[MAX_SENSOR_DATA];
     strcpy(returnData, sensorData);
     return *returnData;   */      
     //return atof(sensorData);
-
-    //Serial.println(sensorData);
+    Serial.print("\n");
+    Serial.println(sensorData);
+    Serial.println("\n");
 }
 
 void initSensors() {
     
     Wire.begin();
+    //Wire.setClock(10000); // hz
 }
