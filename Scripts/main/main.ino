@@ -48,8 +48,8 @@ AtlasSensor sensors[] = {
 
     {98, 815, "OR"},/* [status][ascii encoded signed float mV][null] */
     {99, 815, "pH"}, /* [status][ascii encoded floating point pH][null] */
-    {97, 575, "DO"}, /* [status][ascii encoded float mg / L][null] */
-    {100, 3000, "EC"}, /* [status][ascii encoded float μS / cm; comma between 1000s place?][null] */
+    {97, 575, "DO"}, /* [status][ascii encoded float mg / L and %][null] */
+    {100, 3000, "EC"}, /* [status][ascii encoded floats μS / cm, val2, val3, val4][null] */
     {102, 600, "RT"}  /* [status][ascii encoded float (3 decimals) celsius][null] */
 };
 

@@ -18,7 +18,7 @@ void readSensor(AtlasSensor sensor) {
 
     delay(delayTime); // wait the correct amount of time for the circuit to complete its instruction.
 
-    Wire.requestFrom(sensorI2CAddress, 20, 1);                                    // call the circuit and request 20 bytes (this may be more than we need)
+    Wire.requestFrom(sensorI2CAddress, 32, 1);                                    // call the circuit and request 20 bytes (this may be more than we need)
     int responseCode = Wire.read();               		         //the first byte is the response code, we read this separately.
 
     switch (responseCode)
