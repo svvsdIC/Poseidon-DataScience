@@ -3,7 +3,7 @@
 #include "sensor.h"
 
 
-void readSensor(AtlasSensor sensor) {
+void readSensor(AtlasSensor &sensor) {
 
 
 
@@ -18,7 +18,9 @@ void readSensor(AtlasSensor sensor) {
 
     delay(delayTime); // wait the correct amount of time for the circuit to complete its instruction.
 
-    Wire.requestFrom(sensorI2CAddress, 32, 1);                                    // call the circuit and request 20 bytes (this may be more than we need)
+    #define MAX_SENSOR_DATA (32)
+
+    Wire.requestFrom(sensorI2CAddress, MAX_SENSOR_DATA, 1);                                    // call the circuit and request 32 bytes
     int responseCode = Wire.read();               		         //the first byte is the response code, we read this separately.
 
     switch (responseCode)
@@ -40,34 +42,26 @@ void readSensor(AtlasSensor sensor) {
         break;                        		//exits the switch case.
     }
    
-    #define MAX_SENSOR_DATA (32)
+    
     char sensorData[MAX_SENSOR_DATA];
     
-    byte in_char = 0xff;
-
     
     for (int i = 0; Wire.available(); i++) {
         byte in_char = Wire.read();
         sensorData[i] = in_char;
-        Serial.print(in_char);
         if(in_char == 0x00) {
             break;
         }
-        Serial.print(", ");
     }
     
 
-    /*char *returnData = new char[MAX_SENSOR_DATA];
-    strcpy(returnData, sensorData);
-    return *returnData;   */      
-    //return atof(sensorData);
-    Serial.print("\n");
-    Serial.println(sensorData);
-    Serial.println("\n");
+    strcpy(sensor.outputData, sensorData);
+
+
 }
 
 void initSensors() {
     
     Wire.begin();
-    //Wire.setClock(10000); // hz
+    
 }

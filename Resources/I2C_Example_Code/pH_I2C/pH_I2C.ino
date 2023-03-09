@@ -19,7 +19,7 @@ byte code = 0;                   //used to hold the I2C response code.
 char ph_data[20];                //we make a 20 byte character array to hold incoming data from the pH circuit.
 byte in_char = 0;                //used as a 1 byte buffer to store inbound bytes from the pH Circuit.
 byte i = 0;                      //counter used for ph_data array.
-int time_ = 815;                 //used to change the delay needed depending on the command sent to the EZO Class pH Circuit.
+int time_ = 1000;                 //used to change the delay needed depending on the command sent to the EZO Class pH Circuit.
 float ph_float;                  //float var used to hold the float value of the pH.
 
 

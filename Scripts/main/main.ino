@@ -1,19 +1,6 @@
 #include <Arduino.h>
 #include "sensor.h"
 
-/*
-
-What we know about the error
-
-> Not recieving all the data
-> Increased Recieved buffer
-> recieved data quits early
-> not the delay time
-> variable suffix and data length
-> EC test code work fine
-
-
-*/
 
 
 // Sensor Use cases documented here:
@@ -46,14 +33,16 @@ AtlasSensor sensors[] = {
     sensorName - 3 character name of the sensor
     */
 
-    {98, 815, "OR"},/* [status][ascii encoded signed float mV][null] */
-    {99, 815, "pH"}, /* [status][ascii encoded floating point pH][null] */
-    {97, 575, "DO"}, /* [status][ascii encoded float mg / L and %][null] */
-    {100, 3000, "EC"}, /* [status][ascii encoded floats μS / cm, val2, val3, val4][null] */
-    {102, 600, "RT"}  /* [status][ascii encoded float (3 decimals) celsius][null] */
+    {98, 815, "OR", ""},/* [status][ascii encoded signed float mV][null] */
+    {99, 815, "pH", ""}, /* [status][ascii encoded floating point pH][null] */
+    {97, 575, "DO", ""}, /* [status][ascii encoded float mg / L and %][null] */
+    {100, 800, "EC", ""}, /* [status][ascii encoded floats μS / cm, val2, val3, val4][null] */
+    {102, 600, "RT", ""}  /* [status][ascii encoded float (3 decimals) celsius][null] */
 };
 
-char serialCommand[32];
+#define RECIEVED_BUFFER_SIZE (32)
+
+char serialCommand[RECIEVED_BUFFER_SIZE];
 int currentByte = 0;
 bool serialCommandReceived = false;
 
@@ -72,16 +61,19 @@ void loop() {
     }
 
 
-    readSensor(sensors[electricalConductivity]);
+    /*readSensor(sensors[ph]);
+    Serial.println(sensors[ph].outputData); */
 
-    delay(1000);
-    /*for (int i = 0; i < 5; i++) {
+    //delay(1000);
+    for (int i = 0; i < 5; i++) {
+
+        readSensor(sensors[i]);
         Serial.print(sensors[i].sensorName);
         Serial.print(": ");
-        Serial.println(readSensor(sensors[i]));
+        Serial.println(sensors[i].outputData);
 
         delay(2500);
-    }*/
+    } 
 
 
 }
