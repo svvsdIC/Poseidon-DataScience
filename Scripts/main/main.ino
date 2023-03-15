@@ -40,6 +40,29 @@ AtlasSensor sensors[] = {
     {102, 600, "RT", ""}  /* [status][ascii encoded float (3 decimals) celsius][null] */
 };
 
+
+#define SENSOR_STORAGE_BUFFER_SIZE (256)
+
+struct SensorOutputArray {
+
+
+    int nothing;
+    SensorOutput sensorOutputs[];
+
+};
+
+SensorOutputArray sensorOutputs[] = {
+
+    SensorOutput OR[SENSOR_STORAGE_BUFFER_SIZE],
+    SensorOutput pH[SENSOR_STORAGE_BUFFER_SIZE],
+    SensorOutput DO[SENSOR_STORAGE_BUFFER_SIZE],
+    SensorOutput EC[SENSOR_STORAGE_BUFFER_SIZE],
+    SensorOutput RT[SENSOR_STORAGE_BUFFER_SIZE]
+
+};
+
+//sensorOutputData[]
+
 #define RECIEVED_BUFFER_SIZE (32)
 
 char serialCommand[RECIEVED_BUFFER_SIZE];

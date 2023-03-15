@@ -3,7 +3,7 @@
 #include "sensor.h"
 
 
-void readSensor(AtlasSensor &sensor) {
+void readSensor(AtlasSensor sensor, SensorOutput &output) {
 
 
 

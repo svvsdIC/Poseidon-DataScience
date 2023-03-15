@@ -17,7 +17,12 @@ struct AtlasSensor
     int address;
     unsigned long readDelayMS;
     String sensorName;
-    char outputData[SENSOR_BUFFER_SIZE];
+    SensorOutput* outputDataLocation;
+};
+
+struct SensorOutput {
+    char timeStamp[20];
+    char sensorData[32];
 };
 
 void readSensor(AtlasSensor &sensor);
