@@ -23,6 +23,14 @@
 [] Local data storage
 */
 
+#define SENSOR_STORAGE_BUFFER_SIZE (256)
+
+
+
+
+
+
+
 AtlasSensor sensors[] = {
 
     /*
@@ -33,33 +41,14 @@ AtlasSensor sensors[] = {
     sensorName - 3 character name of the sensor
     */
 
-    {98, 815, "OR", ""},/* [status][ascii encoded signed float mV][null] */
-    {99, 815, "pH", ""}, /* [status][ascii encoded floating point pH][null] */
-    {97, 575, "DO", ""}, /* [status][ascii encoded float mg / L and %][null] */
-    {100, 800, "EC", ""}, /* [status][ascii encoded floats μS / cm, val2, val3, val4][null] */
-    {102, 600, "RT", ""}  /* [status][ascii encoded float (3 decimals) celsius][null] */
+    {98, 815, OR},/* [status][ascii encoded signed float mV][null] */
+    {99, 815, PH}, /* [status][ascii encoded floating point pH][null] */
+    {97, 575, DO}, /* [status][ascii encoded float mg / L and %][null] */
+    {102, 600, TEMP},  /* [status][ascii encoded float (3 decimals) celsius][null] */
+    {100, 800, EC} /* [status][ascii encoded floats μS / cm, val2, val3, val4][null] */
 };
 
 
-#define SENSOR_STORAGE_BUFFER_SIZE (256)
-
-struct SensorOutputArray {
-
-
-    int nothing;
-    SensorOutput sensorOutputs[];
-
-};
-
-SensorOutputArray sensorOutputs[] = {
-
-    SensorOutput OR[SENSOR_STORAGE_BUFFER_SIZE],
-    SensorOutput pH[SENSOR_STORAGE_BUFFER_SIZE],
-    SensorOutput DO[SENSOR_STORAGE_BUFFER_SIZE],
-    SensorOutput EC[SENSOR_STORAGE_BUFFER_SIZE],
-    SensorOutput RT[SENSOR_STORAGE_BUFFER_SIZE]
-
-};
 
 //sensorOutputData[]
 
@@ -88,15 +77,26 @@ void loop() {
     Serial.println(sensors[ph].outputData); */
 
     //delay(1000);
+
+    #define MAX_SENSOR_READINGS (5)
+
+    
+
     for (int i = 0; i < 5; i++) {
 
-        readSensor(sensors[i]);
+            
+
+        
+
+       /* SensorReading output[MAX_SENSOR_READINGS];
+        readSensor(sensors[i], output[i]);
+
         Serial.print(sensors[i].sensorName);
         Serial.print(": ");
         Serial.println(sensors[i].outputData);
 
-        delay(2500);
-    } 
+        delay(2500);*/
+    }
 
 
 }

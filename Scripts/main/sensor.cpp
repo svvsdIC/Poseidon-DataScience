@@ -2,8 +2,9 @@
 #include <Wire.h>
 #include "sensor.h"
 
+#define MAX_SENSOR_DATA (32)
 
-void readSensor(AtlasSensor sensor, SensorOutput &output) {
+void readSensor(AtlasSensor sensor, SensorReading &outputLocation) {
 
 
 
@@ -17,8 +18,6 @@ void readSensor(AtlasSensor sensor, SensorOutput &output) {
     Wire.endTransmission();                                                       //end the I2C data transmission.
 
     delay(delayTime); // wait the correct amount of time for the circuit to complete its instruction.
-
-    #define MAX_SENSOR_DATA (32)
 
     Wire.requestFrom(sensorI2CAddress, MAX_SENSOR_DATA, 1);                                    // call the circuit and request 32 bytes
     int responseCode = Wire.read();               		         //the first byte is the response code, we read this separately.
@@ -54,8 +53,15 @@ void readSensor(AtlasSensor sensor, SensorOutput &output) {
         }
     }
     
+    //parse into data thingies
 
-    strcpy(sensor.outputData, sensorData);
+    if(/*is EC*/) {
+        /* parse seperate data points */
+    } else {
+        /*  */
+    }
+
+    // pack data into structures and return them
 
 
 }
