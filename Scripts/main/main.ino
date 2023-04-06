@@ -76,27 +76,23 @@ void loop() {
     /*readSensor(sensors[ph]);
     Serial.println(sensors[ph].outputData); */
 
-    //delay(1000);
+    //delay(1000)
 
-    #define MAX_SENSOR_READINGS (5)
 
-    
-
-    for (int i = 0; i < 5; i++) {
-
-            
+    /* for (int i = 0; i < 5; i++) {
 
         
-
-       /* SensorReading output[MAX_SENSOR_READINGS];
+       SensorReading output[MAX_SENSOR_READINGS];
         readSensor(sensors[i], output[i]);
 
         Serial.print(sensors[i].sensorName);
         Serial.print(": ");
         Serial.println(sensors[i].outputData);
 
-        delay(2500);*/
-    }
+        delay(2500);
+    } */
+
+
 
 
 }

@@ -4,7 +4,9 @@
 
 #define MAX_SENSOR_DATA (32)
 
-void readSensor(AtlasSensor sensor, SensorReading &outputLocation) {
+// Reads the specified sensor, returns the status code, and fills in external string
+
+int readSensor(AtlasSensor sensor/*, char * sensorData*/) {
 
 
 
@@ -22,7 +24,7 @@ void readSensor(AtlasSensor sensor, SensorReading &outputLocation) {
     Wire.requestFrom(sensorI2CAddress, MAX_SENSOR_DATA, 1);                                    // call the circuit and request 32 bytes
     int responseCode = Wire.read();               		         //the first byte is the response code, we read this separately.
 
-    switch (responseCode)
+    /*switch (responseCode)
     {                                       // switch case based on what the response code is.
     case 1:                         		//decimal 1.
         Serial.println("Success");    		//means the command was successful.
@@ -39,31 +41,59 @@ void readSensor(AtlasSensor sensor, SensorReading &outputLocation) {
     case 255:                       		//decimal 255.
         Serial.println("No Data");    		//means there is no further data to send.
         break;                        		//exits the switch case.
-    }
-   
+    } */
+       
+    #define MAX_SENSOR_READINGS (4)
     
+    double separatedSensorValues[MAX_SENSOR_READINGS + 1];
+
     char sensorData[MAX_SENSOR_DATA];
-    
-    
-    for (int i = 0; Wire.available(); i++) {
+
+    int j = 0;
+    for (int i = 0; Wire.available(); i++) { // separate different readings frm the same sensor into an array of doubles
+
         byte in_char = Wire.read();
-        sensorData[i] = in_char;
+
+        if(in_char == ',') {
+            separatedSensorValues[j] = atof(sensorData);
+            sensorData[0] = 0x00;
+            j++;
+        } else {
+            sensorData[i] = in_char;
+        }
+
         if(in_char == 0x00) {
             break;
         }
     }
-    
-    //parse into data thingies
 
-    if(/*is EC*/) {
-        /* parse seperate data points */
-    } else {
-        /*  */
-    }
+
+
+    SensorReading sensorReading[MAX_SENSOR_READINGS + 1]; // rename for clarity; is an array of every value returned by the sensor just read
+
+    switch(sensor.type) { // sensor.type is the ID of the sensor we read
+        case(EC):
+            #define EC_READINGS (4)
+            for(int i; i < EC_READINGS; i++) {
+                sensorReading[i].type = (readingType) (sensor.type + i);
+                sensorReading[i].value = separatedSensorValues[i];
+            }
+            break;
+        /*case(DO):
+
+            break;*/
+        default: // only one reading
+            sensorReading[0].type = sensor.type;
+            //sensorReading.timeStamp = ; // set timestamp here
+            sensorReading[0].value = separatedSensorValues[0];
+            break;
+    } 
 
     // pack data into structures and return them
 
 
+
+    return responseCode;
 }
 
 void initSensors() {
