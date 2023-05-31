@@ -7,6 +7,7 @@
 // https://docs.google.com/document/d/1oTBluc5CXEzSeSb-SR_KXQSh2Zgw1MtRs8IzuibEjN8
 
 /* TODO:
+[] Hours/Minutes/Seconds since start
 [] low power mode - deep sleep
 [] detect sensor error condition
 [] onboard logging
@@ -72,15 +73,42 @@ void loop() {
         serialCommandReceived = false;
     }
 
-    
+    for(int i = 0; i <= MAX_SENSORS; i++) {
 
-    ReturnedSensorValues returnedSensorValues;
-    readSensor(sensors[EC], returnedSensorValues);
-    
-    //delay(1000)
+        ReturnedSensorValues returnedSensorValues;
+
+        switch (readSensor(sensors[i], returnedSensorValues))
+        {                                       
+        case 1:     
+                            		//command was successful.
+            for(int ii = 0; returnedSensorValues.values[ii].timeStamp != 0; ii++) {
+                Serial.print("TS: ");
+                Serial.print(measurementNames[returnedSensorValues.values[ii].timeStamp]);
+                Serial.print("     ");
+                Serial.print(measurementNames[returnedSensorValues.values[ii].type]);    		
+                Serial.print(": ");
+                Serial.print(returnedSensorValues.values[ii].value);
+                Serial.println("\n");
+            }
+
+            break;                   		
+        case 2:                         		
+            Serial.println("Read Failed");     		//command has failed.
+            break;                        		
+
+        case 254:                       	
+            Serial.println("Read Pending");    		//command has not yet been finished calculating.
+            break;                        		
+        case 255:                       		
+            Serial.println("No Data Recieved");    		//there is no further data to send.
+            break;                        		
+        }
+        
+        
+    }
 
 
-
+    delay(5000);
 
 
 }

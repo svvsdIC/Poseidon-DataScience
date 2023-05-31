@@ -32,6 +32,8 @@ static const String measurementNames[NUM_SENSOR_TYPES]
 
 #define MAX_READINGS_PER_SENSOR (4)
 
+#define MAX_SENSORS (5)
+
 struct AtlasSensor
 {
     int address;
