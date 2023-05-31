@@ -6,7 +6,7 @@
 
 // Reads the specified sensor, returns the status code, and fills in external string
 
-int readSensor(AtlasSensor sensor/*, char * sensorData*/) {
+int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation) {
 
 
 
@@ -43,9 +43,8 @@ int readSensor(AtlasSensor sensor/*, char * sensorData*/) {
         break;                        		//exits the switch case.
     } */
        
-    #define MAX_SENSOR_READINGS (4)
     
-    double separatedSensorValues[MAX_SENSOR_READINGS + 1];
+    double separatedSensorValues[MAX_READINGS_PER_SENSOR + 1];
 
     char sensorData[MAX_SENSOR_DATA];
 
@@ -69,29 +68,38 @@ int readSensor(AtlasSensor sensor/*, char * sensorData*/) {
 
 
 
-    SensorReading sensorReading[MAX_SENSOR_READINGS + 1]; // rename for clarity; is an array of every value returned by the sensor just read
+    SensorValue sensorReturnValues[MAX_READINGS_PER_SENSOR + 1]; // rename for clarity; is an array of every value returned by the sensor just read
 
     switch(sensor.type) { // sensor.type is the ID of the sensor we read
         case(EC):
             #define EC_READINGS (4)
-            for(int i; i < EC_READINGS; i++) {
-                sensorReading[i].type = (readingType) (sensor.type + i);
-                sensorReading[i].value = separatedSensorValues[i];
+            for(int i = 0; i < EC_READINGS; i++) {
+                sensorReturnValues[i].type = (readingType) (sensor.type + i);
+                sensorReturnValues[i].value = separatedSensorValues[i];
+                sensorReturnValues[i].timeStamp = millis(); // change this later
             }
             break;
         /*case(DO):
 
             break;*/
         default: // only one reading
-            sensorReading[0].type = sensor.type;
+            sensorReturnValues[0].type = sensor.type;
             //sensorReading.timeStamp = ; // set timestamp here
-            sensorReading[0].value = separatedSensorValues[0];
+            sensorReturnValues[0].value = separatedSensorValues[0];
+            sensorReturnValues[0].timeStamp = millis();
             break;
-    } 
+    }
 
     // pack data into structures and return them
 
+    ReturnedSensorValues finalReturnValues;
 
+
+    for(int i = 0; i <= MAX_READINGS_PER_SENSOR + 1; i++) {
+        finalReturnValues.values[i] = sensorReturnValues[i];
+    }
+
+    outputLocation = finalReturnValues;
 
     return responseCode;
 }

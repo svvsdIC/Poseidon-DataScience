@@ -30,6 +30,8 @@ static const String measurementNames[NUM_SENSOR_TYPES]
 
 #define SENSOR_BUFFER_SIZE (16)
 
+#define MAX_READINGS_PER_SENSOR (4)
+
 struct AtlasSensor
 {
     int address;
@@ -37,13 +39,17 @@ struct AtlasSensor
     enum readingType type;
 };
 
-struct SensorReading {
+struct SensorValue {
     readingType type;
-    char timeStamp[20];
+    unsigned long timeStamp;
     double value;
 };
 
-int readSensor(AtlasSensor sensor/*, char * sensorData */);
+struct ReturnedSensorValues {
+    SensorValue values[MAX_READINGS_PER_SENSOR + 1];
+};
+
+int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation);
 void initSensors();
 
 #endif // #ifndef __SENSOR_H
