@@ -24,7 +24,7 @@ static const String measurementNames[NUM_SENSOR_TYPES]
     "Temperature",                  /* TEMP */
     "Electrical Conductivity",      /* EC */    
     "Total Dissolved Solids",       /* TDS */
-    "Salinity"                      /* SL */
+    "Salinity",                      /* SL */
     "Specific Gravity"              /* SG */
 };
 

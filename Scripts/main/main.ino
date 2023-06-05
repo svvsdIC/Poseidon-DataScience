@@ -39,7 +39,7 @@ AtlasSensor sensors[] = {
 
     address - I2C bus adress
     readDelayMS - duration of read delay in milliseconds
-    sensorName - 3 character name of the sensor
+    sensorType - type of sensor
     */
 
     {98, 815, OR},/* [status][ascii encoded signed float mV][null] */
@@ -62,7 +62,7 @@ bool serialCommandReceived = false;
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("Serial Initialized :)");
+    Serial.println("Serial Initialized");
     initSensors();
 }
 
@@ -73,42 +73,58 @@ void loop() {
         serialCommandReceived = false;
     }
 
-    for(int i = 0; i <= MAX_SENSORS; i++) {
+    for(int i = 0; i < MAX_SENSORS; i++) {
 
         ReturnedSensorValues returnedSensorValues;
 
-        switch (readSensor(sensors[i], returnedSensorValues))
+        Serial.print("Read Attempt on ");
+        Serial.println(measurementNames[i]);
+
+        //Serial.println(readSensor(sensors[i], returnedSensorValues)); // returns -1
+
+        switch (int responseCode = readSensor(sensors[i], returnedSensorValues))
         {                                       
         case 1:     
                             		//command was successful.
-            for(int ii = 0; returnedSensorValues.values[ii].timeStamp != 0; ii++) {
-                Serial.print("TS: ");
-                Serial.print(measurementNames[returnedSensorValues.values[ii].timeStamp]);
-                Serial.print("     ");
-                Serial.print(measurementNames[returnedSensorValues.values[ii].type]);    		
-                Serial.print(": ");
+            Serial.println("Success");
+
+            for(int ii = 0; (returnedSensorValues.values[ii].timeStamp != 0) && (returnedSensorValues.values[ii].type != -1); ii++) {
+                Serial.print("At time: ");
+                Serial.print(returnedSensorValues.values[ii].timeStamp);
+                Serial.print(" cs,  ");
+                Serial.print(measurementNames[(int) returnedSensorValues.values[ii].type]);    		
+                Serial.print(" measured: ");
                 Serial.print(returnedSensorValues.values[ii].value);
                 Serial.println("\n");
             }
 
             break;                   		
         case 2:                         		
-            Serial.println("Read Failed");     		//command has failed.
+            Serial.println("Read Command Failed\n");     		//command has failed, probably syntax
             break;                        		
 
         case 254:                       	
-            Serial.println("Read Pending");    		//command has not yet been finished calculating.
-            break;                        		
+            Serial.println("Read Pending\n");    		//command has not yet been finished calculating.
+            break;        
+
         case 255:                       		
-            Serial.println("No Data Recieved");    		//there is no further data to send.
+            Serial.println("No Data Recieved\n");    		//there is no further data to send.
             break;                        		
+
+        default:
+            Serial.print("ERROR: Invalid Response Code: ");    		// Weird other response code
+            Serial.println(responseCode);         
+
+            break;    
         }
-        
+        #define DELAY_BETWEEN_SENSOR_READS (2000)
+
+        delay(DELAY_BETWEEN_SENSOR_READS - sensors[i].readDelayMS);
         
     }
 
 
-    delay(5000);
+    delay(10000);
 
 
 }

@@ -8,6 +8,8 @@
 
 int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation) {
 
+    Serial.print("Sensor I am trying to read: ");
+    Serial.println(sensor.type);
 
 
     int sensorI2CAddress = sensor.address;
@@ -52,26 +54,46 @@ int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation) {
 
     SensorValue sensorReturnValues[MAX_READINGS_PER_SENSOR + 1]; 
 
-    switch(sensor.type) { // sensor.type is the ID of the sensor we read
+    for(int j = 0; j <= MAX_READINGS_PER_SENSOR + 1; j++) {
+        sensorReturnValues[j].type = (readingType) (-1); 
+        sensorReturnValues[j].value = (0);
+        sensorReturnValues[j].timeStamp = (unsigned long) (0);
+    }
+
+    switch(sensor.type) { 
         case(EC):
+            Serial.println("I think this is an EC sensor.");
             #define EC_READINGS (4)
-            for(int i = 0; i < EC_READINGS; i++) {
-                sensorReturnValues[i].type = (readingType) (sensor.type + i); // TODO: change to more robust system
-                sensorReturnValues[i].value = separatedSensorValues[i];
-                sensorReturnValues[i].timeStamp = millis(); // change this later
+            for(int j = 0; j < EC_READINGS; j++) {
+                sensorReturnValues[j].type = (readingType) (sensor.type + j); // TODO: change to more robust system
+                sensorReturnValues[j].value = separatedSensorValues[j];
+                sensorReturnValues[j].timeStamp = (unsigned long) (( (float) millis() ) / 100); // TODO: change this format later
             }
+
             break;
         /*case(DO):
 
             break;*/
         default: // only one reading
+            Serial.println("I think this is NOT an EC sensor.");
             sensorReturnValues[0].type = sensor.type;
             //sensorReading.timeStamp = ; // set timestamp here
             sensorReturnValues[0].value = separatedSensorValues[0];
-            sensorReturnValues[0].timeStamp = millis();
+            sensorReturnValues[0].timeStamp = (unsigned long) (( (float) millis() ) / 100);
             break;
     }
-
+/*
+    for(auto x : sensorReturnValues) {
+        if(x.type != -1) {
+            Serial.print("Return Value: ");
+            Serial.print(x.value);
+            Serial.print(";  Type: ");
+            Serial.print(x.type);
+            Serial.print(";  TimeStamp: ");
+            Serial.println(x.timeStamp);
+        }
+    }
+*/
     // pack data into structures and return them
 
     ReturnedSensorValues finalReturnValues;
