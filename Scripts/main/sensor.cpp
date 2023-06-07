@@ -8,8 +8,8 @@
 
 int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation) {
 
-    Serial.print("Sensor I am trying to read: ");
-    Serial.println(sensor.type);
+    //Serial.print("Sensor I am trying to read: ");
+    //Serial.println(sensor.type);
 
 
     int sensorI2CAddress = sensor.address;
@@ -30,25 +30,51 @@ int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation) {
     
     double separatedSensorValues[MAX_READINGS_PER_SENSOR + 1];
 
+    for(double x : separatedSensorValues) {
+        x = (double) 0.00;
+    }
+
     char sensorData[MAX_SENSOR_DATA];
 
     int j = 0;
     for (int i = 0; Wire.available(); i++) { // separate different readings frm the same sensor into an array of doubles
+        
+        //Serial.print("iterator: ");
+        //Serial.println(i);
 
         byte in_char = Wire.read();
 
+        //Serial.print("in_char: ");
+        //Serial.println(in_char);
+
         if(in_char == ',') {
             separatedSensorValues[j] = atof(sensorData);
+
+            //Serial.print("de-comma'd sensor data: ");
+            //Serial.println(sensorData);
+
             sensorData[0] = 0x00;
+            i = -1; // since i indexes before we get back, we want to start at character 0 next time
             j++;
         } else {
             sensorData[i] = in_char;
         }
 
         if(in_char == 0x00) {
+            separatedSensorValues[j] = atof(sensorData);
+            sensorData[0] = 0x00;
+            j++;    
             break;
         }
     }
+    /*Serial.print("I processed this many comma separated values: ");
+    Serial.println(j + 1);
+
+    Serial.println("All of the values I have processed are listed below:");
+    for(double x : separatedSensorValues) {
+        Serial.print("Value: ");
+        Serial.println(x);
+    }*/
 
 
 
@@ -62,7 +88,7 @@ int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation) {
 
     switch(sensor.type) { 
         case(EC):
-            Serial.println("I think this is an EC sensor.");
+            //Serial.println("I think this is an EC sensor.");
             #define EC_READINGS (4)
             for(int j = 0; j < EC_READINGS; j++) {
                 sensorReturnValues[j].type = (readingType) (sensor.type + j); // TODO: change to more robust system
@@ -75,7 +101,7 @@ int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation) {
 
             break;*/
         default: // only one reading
-            Serial.println("I think this is NOT an EC sensor.");
+            //Serial.println("I think this is NOT an EC sensor.");
             sensorReturnValues[0].type = sensor.type;
             //sensorReading.timeStamp = ; // set timestamp here
             sensorReturnValues[0].value = separatedSensorValues[0];
