@@ -6,6 +6,8 @@
 //This code was written in the Arduino 1.8.9 IDE
 //This code was last tested 7/2019
 
+//Scripts\\main\\main.ino
+//Resources\\I2C_Example_Code\\pH_I2C\\pH_I2C.ino
 
 #include <Wire.h>                //enable I2C.
 #define address 100              //default I2C ID number for EZO EC Circuit.
@@ -36,6 +38,7 @@ void setup()                     //hardware initialization.
 {
   Serial.begin(9600);            //enable serial port.
   Wire.begin();                  //enable I2C port.
+  Serial.println("Sucess");
 }
 
 
