@@ -7,6 +7,7 @@
 // https://docs.google.com/document/d/1oTBluc5CXEzSeSb-SR_KXQSh2Zgw1MtRs8IzuibEjN8
 
 /* TODO:
+[] CONVERT TO CLASS STRUCTURE
 [] Hours/Minutes/Seconds since start
 [] low power mode - deep sleep
 [] detect sensor error condition
@@ -81,8 +82,8 @@ void loop() {
         Serial.println(measurementNames[i]);
 
         //Serial.println(readSensor(sensors[i], returnedSensorValues)); // returns -1
-
-        switch (int responseCode = readSensor(sensors[i], returnedSensorValues))
+        int responseCode = readSensor(sensors[i], returnedSensorValues);
+        switch (responseCode)
         {                                       
         case 1:     
                             		//command was successful.
@@ -109,8 +110,11 @@ void loop() {
 
         case 255:                       		
             Serial.println("No Data Recieved\n");    		//there is no further data to send.
-            break;                        		
-
+            break;
+                        		
+        case -1:
+            Serial.println("No Connection From Sensor\n");
+            break;
         default:
             Serial.print("ERROR: Invalid Response Code: ");    		// Weird other response code
             Serial.println(responseCode);         
