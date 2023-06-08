@@ -8,6 +8,8 @@
 
 /* TODO:
 [] CONVERT TO CLASS STRUCTURE
+[] Specify return values
+[] constantly read unless told to turn off, return values when asked for
 [] Hours/Minutes/Seconds since start
 [] low power mode - deep sleep
 [] detect sensor error condition
@@ -33,22 +35,17 @@
 
 
 
-AtlasSensor sensors[] = {
+/*AtlasSensor sensors[] = {
 
-    /*
-    {address, readDelayMS, sensorName}
+    
 
-    address - I2C bus adress
-    readDelayMS - duration of read delay in milliseconds
-    sensorType - type of sensor
-    */
 
-    {98, 815, OR},/* [status][ascii encoded signed float mV][null] */
-    {99, 815, PH}, /* [status][ascii encoded floating point pH][null] */
-    {97, 575, DO}, /* [status][ascii encoded float mg / L and %][null] */
-    {102, 600, TEMP},  /* [status][ascii encoded float (3 decimals) celsius][null] */
-    {100, 800, EC} /* [status][ascii encoded floats μS / cm, val2, val3, val4][null] */
-};
+    {98, 815, OR},
+    {99, 815, PH}, 
+    {97, 575, DO},
+    {102, 600, TEMP},
+    {100, 800, EC}
+};*/
 
 
 
@@ -61,10 +58,14 @@ int currentByte = 0;
 bool serialCommandReceived = false;
 
 
+
+
 void setup() {
     Serial.begin(9600);
     Serial.println("Serial Initialized");
     initSensors();
+    Serial.println("Setup done");
+    
 }
 
 void loop() {
@@ -74,9 +75,30 @@ void loop() {
         serialCommandReceived = false;
     }
 
-    for(int i = 0; i < MAX_SENSORS; i++) {
+    EC_Sensor obj1 = EC_Sensor();
 
-        ReturnedSensorValues returnedSensorValues;
+    Serial.println(obj1.read());
+
+
+    for(int i = 0; i < 4; i++) {
+        Serial.print(obj1.m_displayNames[i]);
+        Serial.print("measured: ");
+        Serial.println(obj1.m_returnValues[i].value);
+    }
+
+
+    /*Serial.print("Display Name 0: ");
+    Serial.println(obj1.m_displayNames[0]);
+    Serial.print("\nDisplay Name 1: ");
+    Serial.println(obj1.m_displayNames[1]);
+    Serial.print("\nDisplay Name 2: ");
+    Serial.println(obj1.m_displayNames[2]);
+    Serial.print("\nDisplay Name 3: ");
+    Serial.println(obj1.m_displayNames[3]);*/
+
+    delay(3000);
+
+    /*for(int i = 0; i < MAX_SENSORS; i++) {
 
         Serial.print("Read Attempt on ");
         Serial.println(measurementNames[i]);
@@ -125,10 +147,11 @@ void loop() {
 
         delay(DELAY_BETWEEN_SENSOR_READS - sensors[i].readDelayMS);
         
-    }
 
-
-    delay(10000);
+    }*/
+    
+    
+    
 
 
 }

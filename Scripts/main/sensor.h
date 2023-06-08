@@ -1,8 +1,7 @@
 #ifndef __SENSOR_H
 #define __SENSOR_H
 
-
-enum readingType  // group all child readings under their corresponding parent reading, in order.
+enum ReadingType  // group all child readings under their corresponding parent reading, in order.
 {
     
     OR, 
@@ -10,7 +9,7 @@ enum readingType  // group all child readings under their corresponding parent r
     PH,
 
     DO, 
-
+    
     TEMP,
 
     EC,
@@ -18,45 +17,86 @@ enum readingType  // group all child readings under their corresponding parent r
     SL,
     SG,
 
-    NUM_READING_TYPES
+    NUM_READING_TYPES,
+
+    INVALID_TYPE = -1
 };
 
-static const String measurementNames[NUM_READING_TYPES]
+/*static const String measurementNames[NUM_READING_TYPES]
 {
-    "Oxygen Reduction",             /* OR */
-    "pH",                           /* PH */
-    "Dissolved Oxygen",             /* DO */
-    "Temperature",                  /* TEMP */
-    "Electrical Conductivity",      /* EC */    
-    "Total Dissolved Solids",       /* TDS */
-    "Salinity",                      /* SL */
-    "Specific Gravity"              /* SG */
-};
+    "Oxygen Reduction",             
+    "pH",                           
+    "Dissolved Oxygen",             
+    "Temperature",                  
+    "Electrical Conductivity",          
+    "Total Dissolved Solids",       
+    "Salinity",                      
+    "Specific Gravity"              
+};*/
 
-#define SENSOR_BUFFER_SIZE (16)
+#define SENSOR_BUFFER_SIZE (32)
 
 #define MAX_READINGS_PER_SENSOR (4)
 
+#define MAX_READING_NAME_LENGTH (32)
+
 #define MAX_SENSORS (5)
 
-struct AtlasSensor
+
+
+
+
+/*struct AtlasSensor
 {
     int address;
     unsigned long readDelayMS;
     enum readingType type;
-};
+};*/
 
 struct SensorValue {
-    readingType type;
+    ReadingType type;
     unsigned long timeStamp;
     double value;
 };
 
-struct ReturnedSensorValues {
-    SensorValue values[MAX_READINGS_PER_SENSOR + 1];
+
+class AtlasSensor {
+    public:
+        int m_address;
+        unsigned long m_readDelayMS;
+
+        char m_displayNames[MAX_READINGS_PER_SENSOR + 1][MAX_READING_NAME_LENGTH + 1];
+        ReadingType m_readingTypes[MAX_READINGS_PER_SENSOR + 1]; 
+        
+        SensorValue m_returnValues[MAX_READINGS_PER_SENSOR + 1];
+
+
+        int read();
+
+        AtlasSensor(int address, unsigned long readDelayMS);
+
+    // add calibration, sleep, status, etc.
+
+
 };
 
-int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation);
+
+
+
+class EC_Sensor : public AtlasSensor {
+    
+
+    public:
+        EC_Sensor();
+
+};
+
+
+
+
+
+
+
 void initSensors();
 
 #endif // #ifndef __SENSOR_H
