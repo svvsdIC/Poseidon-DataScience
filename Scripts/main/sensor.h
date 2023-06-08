@@ -1,22 +1,27 @@
 #ifndef __SENSOR_H
 #define __SENSOR_H
 
-enum readingType 
+
+enum readingType  // group all child readings under their corresponding parent reading, in order.
 {
-    // first 5 are used both for identifying the sensor type and datapoint type
+    
     OR, 
+
     PH,
+
     DO, 
+
     TEMP,
+
     EC,
-    // The rest are datapoint types only, not distinct sensors
     TDS, 
     SL,
     SG,
-    NUM_SENSOR_TYPES
+
+    NUM_READING_TYPES
 };
 
-static const String measurementNames[NUM_SENSOR_TYPES]
+static const String measurementNames[NUM_READING_TYPES]
 {
     "Oxygen Reduction",             /* OR */
     "pH",                           /* PH */

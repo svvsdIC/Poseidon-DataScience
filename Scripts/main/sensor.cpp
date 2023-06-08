@@ -34,7 +34,9 @@ int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation) {
         x = (double) 0.00;
     }
 
-    char sensorData[MAX_SENSOR_DATA];
+    char sensorData[MAX_SENSOR_DATA + 1];
+
+    sensorData[MAX_SENSOR_DATA + 1] = '\0';
 
     int j = 0;
     for (int i = 0; Wire.available(); i++) { // separate different readings frm the same sensor into an array of doubles
