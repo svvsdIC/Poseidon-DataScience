@@ -8,7 +8,8 @@ enum ReadingType  // group all child readings under their corresponding parent r
 
     PH,
 
-    DO, 
+    DOD,
+    DOP, 
     
     TEMP,
 
@@ -59,8 +60,8 @@ struct SensorValue {
     double value;
 };
 
-
-class AtlasSensor {
+// generic class for a sensor
+class Sensor_Base {
     public:
         int m_address;
         unsigned long m_readDelayMS;
@@ -71,9 +72,11 @@ class AtlasSensor {
         // m_returnValues[MAX_READINGS_PER_SENSOR + 1];
 
 
-        int read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]);
+        
+        int read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]); // returns the values read by the sensor
+        virtual void enableAllParameters();
 
-        AtlasSensor(int address, unsigned long readDelayMS);
+        Sensor_Base(int address, unsigned long readDelayMS);
 
     // add calibration, sleep, status, etc.
 
@@ -82,17 +85,44 @@ class AtlasSensor {
 
 
 
-
-class EC_Sensor : public AtlasSensor {
+// specific subclasses for each type of sensor
+class Sensor_EC : public Sensor_Base {
     
-
     public:
-        EC_Sensor();
+        Sensor_EC();
+        void enableAllParameters();
 
 };
 
+class Sensor_OR : public Sensor_Base {
+    
+    public:
+        Sensor_OR();
+
+};
+
+class Sensor_PH : public Sensor_Base {
+    
+    public:
+        Sensor_PH();
+
+};
+
+class Sensor_DO : public Sensor_Base {
+    
+    public:
+        Sensor_DO();
+        void enableAllParameters();
 
 
+};
+
+class Sensor_TEMP : public Sensor_Base {
+    
+    public:
+        Sensor_TEMP();
+
+};
 
 
 

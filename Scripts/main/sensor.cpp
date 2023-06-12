@@ -6,7 +6,7 @@
 
 
 
-AtlasSensor::AtlasSensor(int address, unsigned long readDelayMS) {
+Sensor_Base::Sensor_Base(int address, unsigned long readDelayMS) {
 
     m_address = address;
     m_readDelayMS = readDelayMS;
@@ -19,15 +19,13 @@ AtlasSensor::AtlasSensor(int address, unsigned long readDelayMS) {
         this->m_displayNames[i][0] = 0x00;
     }
 
-    
         
 }
 
-EC_Sensor::EC_Sensor() : AtlasSensor((int)100, (unsigned long)800) {
+Sensor_EC::Sensor_EC() : Sensor_Base((int)100, (unsigned long)800) {
 
     this->m_readingTypes[0] = EC;
     strncpy(this->m_displayNames[0], "Electrical Conductivity\0", MAX_READING_NAME_LENGTH);
-
 
     this->m_readingTypes[1] = TDS;
     strncpy(this->m_displayNames[1], "Total Dissolved Solids\0", MAX_READING_NAME_LENGTH);
@@ -40,30 +38,74 @@ EC_Sensor::EC_Sensor() : AtlasSensor((int)100, (unsigned long)800) {
 
 }
 
+Sensor_OR::Sensor_OR() : Sensor_Base((int)98, (unsigned long)815) {
 
+    this->m_readingTypes[0] = OR;
+    strncpy(this->m_displayNames[0], "Oxygen Reduction\0", MAX_READING_NAME_LENGTH);
+
+}
+
+Sensor_DO::Sensor_DO() : Sensor_Base((int)97, (unsigned long)575) {
+
+    this->m_readingTypes[0] = DOD;
+    strncpy(this->m_displayNames[0], "Dissolved Oxygen Density\0", MAX_READING_NAME_LENGTH);
+
+    this->m_readingTypes[1] = DOP;
+    strncpy(this->m_displayNames[0], "Dissolved Oxygen Percent\0", MAX_READING_NAME_LENGTH);
+
+}
+
+Sensor_PH::Sensor_PH() : Sensor_Base((int)98, (unsigned long)815) {
+
+    this->m_readingTypes[0] = PH;
+    strncpy(this->m_displayNames[0], "Potential Hydrogen\0", MAX_READING_NAME_LENGTH);
+
+}
+
+Sensor_TEMP::Sensor_TEMP() : Sensor_Base((int)98, (unsigned long)815) {
+
+    this->m_readingTypes[0] = PH;
+    strncpy(this->m_displayNames[0], "Temperature\0", MAX_READING_NAME_LENGTH);
+
+}
 
 // Reads the specified sensor, returns the status code, and fills in external string
 
-int AtlasSensor::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]) {
+int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]) {
 
     //Serial.print("Sensor I am trying to read: ");
-    //Serial.println(sensor.type);
+    //Serial.println(this->m_displayNames[0]);
 
 
-    int sensorI2CAddress = m_address;
-    unsigned long delayTime = m_readDelayMS;
 
     char cmd[] = {'r', '\0'};
 
-    Wire.beginTransmission(sensorI2CAddress);                          // call the circuit by its ID number.
-    Wire.write( cmd );                                                     //transmit the command that was sent through the serial port.
-    Wire.endTransmission();                                                       //end the I2C data transmission.
 
-    delay(delayTime); // wait the correct amount of time for the circuit to complete its instruction.
 
-    Wire.requestFrom(sensorI2CAddress, MAX_SENSOR_DATA, 1);                                    // call the circuit and request 32 bytes
-    int responseCode = Wire.read();               		         //the first byte is the response code, we read this separately.
+    Wire.beginTransmission(this->m_address); 
 
+    Serial.print("Addr: ");
+    Serial.println(this->m_address);
+    Serial.print("Delay: ");
+    Serial.println(this->m_readDelayMS);
+
+    Wire.write( cmd );                                                    
+    Wire.endTransmission(true);  
+
+    delay(this->m_readDelayMS); 
+    //Serial.println("lived to pos. 0");
+
+    delay(1000);
+
+    Wire.requestFrom(this->m_address, MAX_SENSOR_DATA, 1);  
+    //Serial.println("lived to pos. 1");                       
+    //delay(1000);         
+    int responseCode = (int) Wire.read();   // the first byte is the response code
+    //Serial.println("lived to pos. 2");
+    Serial.print("Read responseCode: ");
+    Serial.println(responseCode);
+    delay(1000);
+    
        
     
     double separatedSensorValues[MAX_READINGS_PER_SENSOR + 1];
@@ -75,6 +117,7 @@ int AtlasSensor::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     char sensorData[MAX_SENSOR_DATA + 1];
 
     sensorData[MAX_SENSOR_DATA + 1] = '\0';
+     
 
     int j = 0;
     for (int i = 0; Wire.available(); i++) { // separate different readings frm the same sensor into an array of doubles
@@ -111,14 +154,12 @@ int AtlasSensor::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
         sensorReturnValues[j].timeStamp = (unsigned long) (0);
     }
 
-
-            //Serial.println("I think this is an EC sensor.");
-    for(int j = 0; m_readingTypes[j] != INVALID_TYPE; j++) {
+    for(int j = 0; this->m_readingTypes[j] != INVALID_TYPE && j < MAX_READINGS_PER_SENSOR; j++) {
         sensorReturnValues[j].type = (ReadingType) (m_readingTypes[j]); // TODO: change to more robust system
         sensorReturnValues[j].value = separatedSensorValues[j];
         sensorReturnValues[j].timeStamp = (unsigned long) (( (float) millis() ) / 1000);
     }
-/*
+    /*
     for(auto x : sensorReturnValues) {
         if(x.type != -1) {
             Serial.print("Return Value: ");
@@ -129,20 +170,92 @@ int AtlasSensor::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
             Serial.println(x.timeStamp);
         }
     }
-*/
+    */
     // pack data into structures and return them
 
 
     int i = 0;
     for(SensorValue v : sensorReturnValues) {
         outputLocation[i] = v;
+        Serial.println(v.type);
         i++;
     }
+
+
+
+    Serial.println("Line before return in read()");
+    delay(1000);
+
 
 
     return responseCode;
 }
 
+
+void Sensor_EC::enableAllParameters() { // enables all EC reading types to be returned from the sensor, so we get the expected number of return vaues.
+
+    #define MAX_DATA_SENT_O (9)
+
+    char cmd[][MAX_DATA_SENT_O] = {
+        {"O,EC,1\0"}, 
+        {"O,TDS,1\0"}, 
+        {"O,S,1\0"}, 
+        {"O,SG,1\0"},
+        {"/0"}
+        };
+
+    for(int i = 0; i < (int)( sizeof(cmd) / sizeof(cmd[0]) ) - 1; i++) {
+        //char cmd[] = ;
+
+        //Serial.println(cmd[i]);
+
+        Wire.beginTransmission(m_address);                         
+        Wire.write( cmd[i] );                                                    
+        Wire.endTransmission(true); 
+
+        delay(m_readDelayMS); // longer than reccomended 300 ms
+
+        Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
+        int responseCode = Wire.read();
+        Wire.endTransmission(true);
+        
+
+    }
+
+    //return 1;
+
+}
+
+void Sensor_DO::enableAllParameters() {
+
+    #define MAX_DATA_SENT_O (9)
+
+    char cmd[][MAX_DATA_SENT_O] = {
+        {"O,mg,1\0"}, 
+        {"O,%,1\0"}, 
+        {"\0"}
+        };
+
+    for(int i = 0; i < (int)( sizeof(cmd) / sizeof(cmd[0]) ) - 1; i++) {
+        //char cmd[] = ;
+
+        //Serial.println(cmd[i]);
+
+
+        Wire.beginTransmission(m_address);                         
+        Wire.write( cmd[i] );                                                    
+        Wire.endTransmission(true); 
+
+        delay(m_readDelayMS); // longer than reccomended 300 ms
+
+        Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
+        int responseCode = Wire.read();
+
+    }
+
+    //return 1;
+
+}
 
 // classname objectname = classname(parameter); 
 

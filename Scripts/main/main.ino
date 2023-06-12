@@ -7,8 +7,6 @@
 // https://docs.google.com/document/d/1oTBluc5CXEzSeSb-SR_KXQSh2Zgw1MtRs8IzuibEjN8
 
 /* TODO:
-[] CONVERT TO CLASS STRUCTURE
-[] Specify return values
 [] constantly read unless told to turn off, return values when asked for
 [] Hours/Minutes/Seconds since start
 [] low power mode - deep sleep
@@ -57,25 +55,33 @@ char serialCommand[RECIEVED_BUFFER_SIZE];
 int currentByte = 0;
 bool serialCommandReceived = false;
 
-
+Sensor_EC obj_EC = Sensor_EC(); // filler names for testing
+Sensor_DO obj_DO = Sensor_DO();
 
 
 void setup() {
+
     Serial.begin(9600);
     Serial.println("Serial Initialized");
     initSensors();
-    Serial.println("Setup done");
+    //delay(300);
+    //Serial.println("Setup done");
+
+    //obj_EC.enableAllParameters();
+    //obj_DO.enableAllParameters();
     
 }
 
 void loop() {
+
+    //Serial.println("loop");
 
     if(serialCommandReceived) {
         // follow command
         serialCommandReceived = false;
     }
 
-    EC_Sensor obj1 = EC_Sensor();
+    
     
     SensorValue returnedValues[MAX_READINGS_PER_SENSOR + 1];
 
@@ -83,26 +89,46 @@ void loop() {
     returnedValues[0].value = 0;
     returnedValues[0].type = INVALID_TYPE;
 
-    Serial.println(obj1.read(returnedValues));
+    //Serial.println("Abooout to read DO");
 
 
-    for(int i = 0; i < 4; i++) {
-        Serial.print(obj1.m_displayNames[i]);
+    Serial.println(obj_DO.read(returnedValues));
+
+    Serial.println("lived through read()");
+    delay(1000);
+
+
+    for(int i = 0; i < 2; i++) {
+        Serial.print(obj_DO.m_displayNames[i]);
         Serial.print("measured: ");
         Serial.println(returnedValues[i].value);
     }
 
+    delay(4000);
 
-    /*Serial.print("Display Name 0: ");
-    Serial.println(obj1.m_displayNames[0]);
-    Serial.print("\nDisplay Name 1: ");
-    Serial.println(obj1.m_displayNames[1]);
-    Serial.print("\nDisplay Name 2: ");
-    Serial.println(obj1.m_displayNames[2]);
-    Serial.print("\nDisplay Name 3: ");
-    Serial.println(obj1.m_displayNames[3]);*/
 
-    delay(3000);
+
+
+
+    returnedValues[0].timeStamp = 0;
+    returnedValues[0].value = 0;
+    returnedValues[0].type = INVALID_TYPE;
+
+    //Serial.println("Abooout to read EC");
+
+    Serial.println(obj_EC.read(returnedValues));
+
+
+    for(int i = 0; i < 4; i++) {
+        Serial.print(obj_EC.m_displayNames[i]);
+        Serial.print("measured: ");
+        Serial.println(returnedValues[i].value);
+    }
+
+    
+
+
+    delay(12000);
 
     /*for(int i = 0; i < MAX_SENSORS; i++) {
 
