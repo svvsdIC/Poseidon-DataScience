@@ -19,9 +19,7 @@ AtlasSensor::AtlasSensor(int address, unsigned long readDelayMS) {
         this->m_displayNames[i][0] = 0x00;
     }
 
-    this->m_returnValues[0].timeStamp = 0;
-    this->m_returnValues[0].value = 0;
-    this->m_returnValues[0].type = INVALID_TYPE;
+    
         
 }
 
@@ -46,7 +44,7 @@ EC_Sensor::EC_Sensor() : AtlasSensor((int)100, (unsigned long)800) {
 
 // Reads the specified sensor, returns the status code, and fills in external string
 
-int AtlasSensor::read() {
+int AtlasSensor::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]) {
 
     //Serial.print("Sensor I am trying to read: ");
     //Serial.println(sensor.type);
@@ -137,7 +135,7 @@ int AtlasSensor::read() {
 
     int i = 0;
     for(SensorValue v : sensorReturnValues) {
-        m_returnValues[i] = v;
+        outputLocation[i] = v;
         i++;
     }
 

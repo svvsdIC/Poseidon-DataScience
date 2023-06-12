@@ -68,10 +68,10 @@ class AtlasSensor {
         char m_displayNames[MAX_READINGS_PER_SENSOR + 1][MAX_READING_NAME_LENGTH + 1];
         ReadingType m_readingTypes[MAX_READINGS_PER_SENSOR + 1]; 
         
-        SensorValue m_returnValues[MAX_READINGS_PER_SENSOR + 1];
+        // m_returnValues[MAX_READINGS_PER_SENSOR + 1];
 
 
-        int read();
+        int read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]);
 
         AtlasSensor(int address, unsigned long readDelayMS);
 

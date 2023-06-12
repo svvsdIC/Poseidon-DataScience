@@ -76,14 +76,20 @@ void loop() {
     }
 
     EC_Sensor obj1 = EC_Sensor();
+    
+    SensorValue returnedValues[MAX_READINGS_PER_SENSOR + 1];
 
-    Serial.println(obj1.read());
+    returnedValues[0].timeStamp = 0;
+    returnedValues[0].value = 0;
+    returnedValues[0].type = INVALID_TYPE;
+
+    Serial.println(obj1.read(returnedValues));
 
 
     for(int i = 0; i < 4; i++) {
         Serial.print(obj1.m_displayNames[i]);
         Serial.print("measured: ");
-        Serial.println(obj1.m_returnValues[i].value);
+        Serial.println(returnedValues[i].value);
     }
 
 
