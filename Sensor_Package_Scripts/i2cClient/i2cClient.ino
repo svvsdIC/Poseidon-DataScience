@@ -205,10 +205,10 @@ void DO_handler(char* command){
     // calculate simulated  disolved oxygen 0.01 - 100.00 mg/L
     // calculate simulated % saturation .01 0 400.00
     // that varies slowly  6
-    float mg_per_liter_float = map(calcCounter, 0, 100, 1, 10000) /100.0;
+    float mg_per_liter_float = map(calcCounter, 0, 100, 1, 1500) /100.0;
     char mg_per_liter_value[20];
     dtostrf(mg_per_liter_float,4,2,mg_per_liter_value);
-    float percent_float = map(calcCounter, 0, 100, 1, 40000) / 100;
+    float percent_float = map(calcCounter, 0, 100, 1, 10000) / 100;
     char percent_value[20];
     dtostrf(percent_float,7,2,percent_value);
 
