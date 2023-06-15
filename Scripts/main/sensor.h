@@ -43,7 +43,7 @@ enum ReadingType  // group all child readings under their corresponding parent r
 
 #define MAX_SENSORS (5)
 
-
+#define MAX_COMMAND_LENGTH (32)
 
 
 
@@ -63,8 +63,8 @@ struct SensorValue {
 // generic class for a sensor
 class Sensor_Base {
     public:
-        int m_address;
-        unsigned long m_readDelayMS;
+        int m_address;                  // i2c address
+        unsigned long m_readDelayMS;    // delay after command before reading data
 
         char m_displayNames[MAX_READINGS_PER_SENSOR + 1][MAX_READING_NAME_LENGTH + 1];
         ReadingType m_readingTypes[MAX_READINGS_PER_SENSOR + 1]; 
@@ -74,9 +74,11 @@ class Sensor_Base {
 
         
         int read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]); // returns the values read by the sensor
-        virtual void enableAllParameters();
+        virtual void enableAllParameters() {};
 
         Sensor_Base(int address, unsigned long readDelayMS);
+    protected:
+        int sendI2CMessage(char cmd[MAX_COMMAND_LENGTH + 1]);
 
     // add calibration, sleep, status, etc.
 

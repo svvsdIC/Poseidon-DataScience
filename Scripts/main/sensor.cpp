@@ -91,9 +91,9 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     delay(this->m_readDelayMS); 
     //Serial.println("lived to pos. 0");
 
-    delay(1000);
+    //delay(1000);
 
-    Wire.requestFrom(this->m_address, MAX_SENSOR_DATA, 1);  
+    Wire.requestFrom(this->m_address, MAX_SENSOR_DATA + 1, 1);  
     //Serial.println("lived to pos. 1");                       
     //delay(1000);         
     int responseCode = (int) Wire.read();   // the first byte is the response code
@@ -112,7 +112,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
 
     char sensorData[MAX_SENSOR_DATA + 1];
 
-    sensorData[MAX_SENSOR_DATA + 1] = '\0';
+    sensorData[0] = '\0';
      
 
     int j = 0;
@@ -181,9 +181,23 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
 
 
     //Serial.println("Line before return in read()");
-    delay(1000);
+    //delay(1000);
 
 
+
+    return responseCode;
+}
+
+int Sensor_Base::sendI2CMessage(char cmd[MAX_COMMAND_LENGTH + 1]) {
+    Wire.beginTransmission(this->m_address);                         
+    Wire.write( cmd );                                                    
+    Wire.endTransmission(true); 
+
+    delay(this->m_readDelayMS);
+
+    Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
+    int responseCode = Wire.read();
+    Wire.endTransmission(true);
 
     return responseCode;
 }
@@ -206,14 +220,17 @@ void Sensor_EC::enableAllParameters() { // enables all EC reading types to be re
 
         //Serial.println(cmd[i]);
 
-        Wire.beginTransmission(m_address);                         
-        Wire.write( cmd[i] );                                                    
-        Wire.endTransmission(true); 
 
-        delay(m_readDelayMS); // longer than reccomended 300 ms
+        int responseCode = sendI2CMessage(cmd[i]);
+
+
+
+        Serial.print("Enable Parameter Response code: ");
+        Serial.print(responseCode);
+        Serial.print(" At Line = ");
+        Serial.println(__LINE__);
 
         Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
-        int responseCode = Wire.read();
         Wire.endTransmission(true);
         
 
@@ -222,6 +239,8 @@ void Sensor_EC::enableAllParameters() { // enables all EC reading types to be re
     //return 1;
 
 }
+
+
 
 void Sensor_DO::enableAllParameters() {
 
@@ -239,14 +258,17 @@ void Sensor_DO::enableAllParameters() {
         //Serial.println(cmd[i]);
 
 
-        Wire.beginTransmission(m_address);                         
-        Wire.write( cmd[i] );                                                    
-        Wire.endTransmission(true); 
+        int responseCode = sendI2CMessage(cmd[i]);
 
-        delay(m_readDelayMS); // longer than reccomended 300 ms
+
+
+        Serial.print("Enable Parameter Response code: ");
+        Serial.print(responseCode);
+        Serial.print(" At Line = ");
+        Serial.println(__LINE__);
 
         Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
-        int responseCode = Wire.read();
+        Wire.endTransmission(true);
 
     }
 

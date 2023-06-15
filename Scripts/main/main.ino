@@ -57,6 +57,12 @@ bool serialCommandReceived = false;
 
 Sensor_EC obj_EC = Sensor_EC(); // filler names for testing
 Sensor_DO obj_DO = Sensor_DO();
+Sensor_TEMP obj_TEMP = Sensor_TEMP();
+Sensor_PH obj_PH = Sensor_PH();
+Sensor_OR obj_OR = Sensor_OR();
+
+
+//Sensor_
 
 
 void setup() {
@@ -67,68 +73,59 @@ void setup() {
     //delay(300);
     //Serial.println("Setup done");
 
-    //obj_EC.enableAllParameters();
-    //obj_DO.enableAllParameters();
+    obj_EC.enableAllParameters();
+    obj_DO.enableAllParameters();
+
+    delay(1000);
     
 }
 
 void loop() {
 
-    //Serial.println("loop");
+    Serial.println("loop");
 
     if(serialCommandReceived) {
         // follow command
         serialCommandReceived = false;
     }
-
     
-    
-    SensorValue returnedValues[MAX_READINGS_PER_SENSOR + 1];
 
-    returnedValues[0].timeStamp = 0;
-    returnedValues[0].value = 0;
-    returnedValues[0].type = INVALID_TYPE;
+    Sensor_Base allInstances[] = {obj_OR, obj_EC, obj_DO, obj_PH, obj_TEMP };
 
-    //Serial.println("Abooout to read DO");
+    for(Sensor_Base obj : allInstances) {
 
+        SensorValue returnedValues[MAX_READINGS_PER_SENSOR + 1];
 
-    Serial.println(obj_DO.read(returnedValues));
+        Serial.println("inside for loop");
 
-    //Serial.println("lived through read()");
-    delay(1000);
+        delay(1000);
 
+        Serial.println(obj.m_address);
 
-    for(int i = 0; i < 2; i++) {
-        Serial.print(obj_DO.m_displayNames[i]);
-        Serial.print(" measured: ");
-        Serial.println(returnedValues[i].value);
+        delay(1000);
+
+        for(int i = 0; i < (int) (sizeof(returnedValues) / sizeof(returnedValues[0])); i++) {
+            returnedValues[i].timeStamp = 0;
+            returnedValues[i].value = 0;
+            returnedValues[i].type = INVALID_TYPE;
+            Serial.print("type: ");
+            Serial.println(returnedValues[i].type);
+        }
+        Serial.print("Status Code: ");
+        Serial.println(obj.read(returnedValues));
+
+        for(int i = 0; returnedValues[i].type != INVALID_TYPE; i++) {
+            Serial.print(obj.m_displayNames[i]);
+            Serial.print(" measured: ");
+            Serial.println(returnedValues[i].value);
+           
+        }
+
+        delay(4000);
     }
 
-    delay(4000);
-
-
-
-
-
-    returnedValues[0].timeStamp = 0;
-    returnedValues[0].value = 0;
-    returnedValues[0].type = INVALID_TYPE;
-
-    //Serial.println("Abooout to read EC");
-
-    Serial.println(obj_EC.read(returnedValues));
-
-
-    for(int i = 0; i < 4; i++) {
-        Serial.print(obj_EC.m_displayNames[i]);
-        Serial.print(" measured: ");
-        Serial.println(returnedValues[i].value);
-    }
 
     
-
-
-    delay(12000);
 
     /*for(int i = 0; i < MAX_SENSORS; i++) {
 
