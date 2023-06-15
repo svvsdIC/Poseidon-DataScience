@@ -82,8 +82,6 @@ void setup() {
 
 void loop() {
 
-    Serial.println("loop");
-
     if(serialCommandReceived) {
         // follow command
         serialCommandReceived = false;
@@ -96,25 +94,22 @@ void loop() {
 
         SensorValue returnedValues[MAX_READINGS_PER_SENSOR + 1];
 
-        Serial.println("inside for loop");
-
-        delay(1000);
-
-        Serial.println(obj.m_address);
-
-        delay(1000);
-
         for(int i = 0; i < (int) (sizeof(returnedValues) / sizeof(returnedValues[0])); i++) {
             returnedValues[i].timeStamp = 0;
             returnedValues[i].value = 0;
             returnedValues[i].type = INVALID_TYPE;
-            Serial.print("type: ");
-            Serial.println(returnedValues[i].type);
+            
         }
-        Serial.print("Status Code: ");
-        Serial.println(obj.read(returnedValues));
+        
+        int responseCode = obj.read(returnedValues);
+        if(responseCode != 1) {
+            Serial.print("ERROR: Status Code: ");
+            Serial.println(responseCode);
+            continue;
+        }
 
-        for(int i = 0; returnedValues[i].type != INVALID_TYPE; i++) {
+        for(int i = 0; (returnedValues[i].type != INVALID_TYPE) && (returnedValues[i].timeStamp != 0); i++) {
+
             Serial.print(obj.m_displayNames[i]);
             Serial.print(" measured: ");
             Serial.println(returnedValues[i].value);

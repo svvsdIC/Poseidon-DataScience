@@ -36,12 +36,19 @@ Sensor_EC::Sensor_EC() : Sensor_Base((int)100, (unsigned long)800) {
     this->m_readingTypes[3] = SG;
     strncpy(this->m_displayNames[3], "Specific Gravity\0", MAX_READING_NAME_LENGTH);
 
+    this->m_readingTypes[4] = INVALID_TYPE;
+
 }
 
 Sensor_OR::Sensor_OR() : Sensor_Base((int)98, (unsigned long)815) {
 
     this->m_readingTypes[0] = OR;
     strncpy(this->m_displayNames[0], "Oxygen Reduction\0", MAX_READING_NAME_LENGTH);
+
+    this->m_readingTypes[1] = INVALID_TYPE;
+    this->m_readingTypes[2] = INVALID_TYPE;
+    this->m_readingTypes[3] = INVALID_TYPE;
+    this->m_readingTypes[4] = INVALID_TYPE;
 
 }
 
@@ -53,19 +60,33 @@ Sensor_DO::Sensor_DO() : Sensor_Base((int)97, (unsigned long)575) {
     this->m_readingTypes[1] = DOP;
     strncpy(this->m_displayNames[1], "Dissolved Oxygen Percent\0", MAX_READING_NAME_LENGTH);
 
+    this->m_readingTypes[2] = INVALID_TYPE;
+    this->m_readingTypes[3] = INVALID_TYPE;
+    this->m_readingTypes[4] = INVALID_TYPE;
+
 }
 
-Sensor_PH::Sensor_PH() : Sensor_Base((int)98, (unsigned long)815) {
+Sensor_PH::Sensor_PH() : Sensor_Base((int)99, (unsigned long)815) {
 
     this->m_readingTypes[0] = PH;
     strncpy(this->m_displayNames[0], "Potential Hydrogen\0", MAX_READING_NAME_LENGTH);
 
+    this->m_readingTypes[1] = INVALID_TYPE;
+    this->m_readingTypes[2] = INVALID_TYPE;
+    this->m_readingTypes[3] = INVALID_TYPE;
+    this->m_readingTypes[4] = INVALID_TYPE;
+
 }
 
-Sensor_TEMP::Sensor_TEMP() : Sensor_Base((int)98, (unsigned long)815) {
+Sensor_TEMP::Sensor_TEMP() : Sensor_Base((int)102, (unsigned long)815) {
 
     this->m_readingTypes[0] = PH;
     strncpy(this->m_displayNames[0], "Temperature\0", MAX_READING_NAME_LENGTH);
+
+    this->m_readingTypes[1] = INVALID_TYPE;
+    this->m_readingTypes[2] = INVALID_TYPE;
+    this->m_readingTypes[3] = INVALID_TYPE;
+    this->m_readingTypes[4] = INVALID_TYPE;
 
 }
 
@@ -151,6 +172,8 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     }
 
     for(int j = 0; this->m_readingTypes[j] != INVALID_TYPE && j < MAX_READINGS_PER_SENSOR; j++) {
+        
+
         sensorReturnValues[j].type = (ReadingType) (m_readingTypes[j]); // TODO: change to more robust system
         sensorReturnValues[j].value = separatedSensorValues[j];
         sensorReturnValues[j].timeStamp = (unsigned long) (( (float) millis() ) / 1000);
@@ -223,13 +246,6 @@ void Sensor_EC::enableAllParameters() { // enables all EC reading types to be re
 
         int responseCode = sendI2CMessage(cmd[i]);
 
-
-
-        Serial.print("Enable Parameter Response code: ");
-        Serial.print(responseCode);
-        Serial.print(" At Line = ");
-        Serial.println(__LINE__);
-
         Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
         Wire.endTransmission(true);
         
@@ -259,13 +275,6 @@ void Sensor_DO::enableAllParameters() {
 
 
         int responseCode = sendI2CMessage(cmd[i]);
-
-
-
-        Serial.print("Enable Parameter Response code: ");
-        Serial.print(responseCode);
-        Serial.print(" At Line = ");
-        Serial.println(__LINE__);
 
         Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
         Wire.endTransmission(true);
