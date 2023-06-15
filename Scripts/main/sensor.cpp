@@ -51,7 +51,7 @@ Sensor_DO::Sensor_DO() : Sensor_Base((int)97, (unsigned long)575) {
     strncpy(this->m_displayNames[0], "Dissolved Oxygen Density\0", MAX_READING_NAME_LENGTH);
 
     this->m_readingTypes[1] = DOP;
-    strncpy(this->m_displayNames[0], "Dissolved Oxygen Percent\0", MAX_READING_NAME_LENGTH);
+    strncpy(this->m_displayNames[1], "Dissolved Oxygen Percent\0", MAX_READING_NAME_LENGTH);
 
 }
 
@@ -84,10 +84,6 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
 
     Wire.beginTransmission(this->m_address); 
 
-    Serial.print("Addr: ");
-    Serial.println(this->m_address);
-    Serial.print("Delay: ");
-    Serial.println(this->m_readDelayMS);
 
     Wire.write( cmd );                                                    
     Wire.endTransmission(true);  
@@ -102,9 +98,9 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     //delay(1000);         
     int responseCode = (int) Wire.read();   // the first byte is the response code
     //Serial.println("lived to pos. 2");
-    Serial.print("Read responseCode: ");
-    Serial.println(responseCode);
-    delay(1000);
+    //Serial.print("Read responseCode: ");
+    //Serial.println(responseCode);
+    //delay(1000);
     
        
     
@@ -158,6 +154,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
         sensorReturnValues[j].type = (ReadingType) (m_readingTypes[j]); // TODO: change to more robust system
         sensorReturnValues[j].value = separatedSensorValues[j];
         sensorReturnValues[j].timeStamp = (unsigned long) (( (float) millis() ) / 1000);
+        //Serial.print("");
     }
     /*
     for(auto x : sensorReturnValues) {
@@ -177,13 +174,13 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     int i = 0;
     for(SensorValue v : sensorReturnValues) {
         outputLocation[i] = v;
-        Serial.println(v.type);
+        //Serial.println(v.type);
         i++;
     }
 
 
 
-    Serial.println("Line before return in read()");
+    //Serial.println("Line before return in read()");
     delay(1000);
 
 

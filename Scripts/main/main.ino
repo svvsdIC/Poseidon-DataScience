@@ -94,13 +94,13 @@ void loop() {
 
     Serial.println(obj_DO.read(returnedValues));
 
-    Serial.println("lived through read()");
+    //Serial.println("lived through read()");
     delay(1000);
 
 
     for(int i = 0; i < 2; i++) {
         Serial.print(obj_DO.m_displayNames[i]);
-        Serial.print("measured: ");
+        Serial.print(" measured: ");
         Serial.println(returnedValues[i].value);
     }
 
@@ -121,7 +121,7 @@ void loop() {
 
     for(int i = 0; i < 4; i++) {
         Serial.print(obj_EC.m_displayNames[i]);
-        Serial.print("measured: ");
+        Serial.print(" measured: ");
         Serial.println(returnedValues[i].value);
     }
 
