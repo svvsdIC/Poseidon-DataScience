@@ -1,16 +1,28 @@
+/*
+
+File Description:
+
+    Defines classes and structures used to read and record data from Atlas sensors.
+
+    Header file of sensor.cpp
+
+*/
+
 #ifndef __SENSOR_H
 #define __SENSOR_H
 
 
-enum readingType  // group all child readings under their corresponding parent reading, in order.
+// Defines a type for each data point returned by a sensor.
+enum ReadingType
 {
     
     OR, 
 
     PH,
 
-    DO, 
-
+    DOD,
+    DOP, 
+    
     TEMP,
 
     EC,
@@ -18,45 +30,107 @@ enum readingType  // group all child readings under their corresponding parent r
     SL,
     SG,
 
-    NUM_READING_TYPES
+    NUM_READING_TYPES,
+
+    INVALID_TYPE = -1
 };
 
-static const String measurementNames[NUM_READING_TYPES]
-{
-    "Oxygen Reduction",             /* OR */
-    "pH",                           /* PH */
-    "Dissolved Oxygen",             /* DO */
-    "Temperature",                  /* TEMP */
-    "Electrical Conductivity",      /* EC */    
-    "Total Dissolved Solids",       /* TDS */
-    "Salinity",                      /* SL */
-    "Specific Gravity"              /* SG */
-};
 
-#define SENSOR_BUFFER_SIZE (16)
+// most bytes that can be returned by a sensor
+#define MAX_SENSOR_DATA (32) 
 
+// Maximum individual data types returned by a sensor after one read request
 #define MAX_READINGS_PER_SENSOR (4)
 
-#define MAX_SENSORS (5)
+// Max length of the text display name of a reading type
+#define MAX_READING_NAME_LENGTH (32)
 
-struct AtlasSensor
-{
-    int address;
-    unsigned long readDelayMS;
-    enum readingType type;
-};
+// Max lenght of a command sent to a sensor
+#define MAX_COMMAND_LENGTH (32)
 
+// Associates a datapoint with its type, and the time it was measured
 struct SensorValue {
-    readingType type;
+    ReadingType type;
     unsigned long timeStamp;
     double value;
 };
 
-struct ReturnedSensorValues {
-    SensorValue values[MAX_READINGS_PER_SENSOR + 1];
+
+// Base class for an Atlas sensor
+class Sensor_Base {
+    public:
+        // I2C address of sensor
+        int m_address;
+
+        // delay after command before reading data
+        unsigned long m_readDelayMS;    
+
+        // array of the names to display for each ReadingType this sensor returns
+        char m_displayNames[MAX_READINGS_PER_SENSOR + 1][MAX_READING_NAME_LENGTH + 1];
+
+        //Array of the ReadingTypes this sensor returns
+        ReadingType m_readingTypes[MAX_READINGS_PER_SENSOR + 1]; 
+                
+        int read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]);
+
+        // Empty virtual void to make sensors with multiple ReadingTypes
+        // return all of the corresponding SensorValues (overridden in subclasses)
+        virtual void enableAllParameters() {};
+
+        Sensor_Base(int address, unsigned long readDelayMS);
+
+    protected:
+        int sendI2CMessage(char cmd[MAX_COMMAND_LENGTH + 1]);
+
+    // TODO: add calibrate(), sleep(), status(), etc.
+
 };
 
-int readSensor(AtlasSensor sensor, ReturnedSensorValues &outputLocation);
-void initSensors();
+
+
+// electrical conductivity (E) sensor subclass
+class Sensor_EC : public Sensor_Base {
+    
+    public:
+        Sensor_EC();
+        void enableAllParameters();
+
+};
+
+// oxygen (OR) reduction sensor subclass
+class Sensor_OR : public Sensor_Base {
+    
+    public:
+        Sensor_OR();
+
+};
+
+// potential hydrogen (PH) sensor subclass
+class Sensor_PH : public Sensor_Base {
+    
+    public:
+        Sensor_PH();
+
+};
+
+// dissolved oxygen (DO) sensor subclass
+class Sensor_DO : public Sensor_Base {
+    
+    public:
+        Sensor_DO();
+        void enableAllParameters();
+
+
+};
+
+// temperature (TEMP) sensor subclass
+class Sensor_TEMP : public Sensor_Base {
+    
+    public:
+        Sensor_TEMP();
+
+};
+
+
 
 #endif // #ifndef __SENSOR_H
