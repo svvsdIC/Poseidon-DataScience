@@ -1,23 +1,66 @@
-// Sensor Use cases documented here:
-// https://docs.google.com/document/d/1oTBluc5CXEzSeSb-SR_KXQSh2Zgw1MtRs8IzuibEjN8
+/*
 
-/* TODO:
-[] constantly read unless told to turn off, return values when asked for
-[] Hours/Minutes/Seconds since start
-[] low power mode - deep sleep
-[] detect sensor error condition
-[] onboard logging
-    [] look at built-in sensor storage
-[] stream live data
-[] instruct single read
-[] Current/voltage measurement
-[] Bluetooth connection
-[] Take readings on command
-[] Measure with set delay
-[] Detect water depth
-[] Data Radio (one measure/hour)
-[] Detect Error conditions
-[] Local data storage
+File Description:
+
+    Instantiates sensors, performs looped reads of each one.  
+    Currently serves as a testbed for sensor.cpp and sensor.h
+
+*/
+
+/*
+
+Development Roadmap:
+
+    Immediate Goals:
+
+    > Better error handling in and out of methods
+    > Add More Methods for sensors
+        > Full Sleep mode
+        > Return current status
+        > Calibration
+        > etc.
+    > Investigate sensor control-board internal memory
+    > Hours/Minutes/Seconds timestamp display (<time.h>)
+    > Build prototype ring buffer
+
+
+    Mid-term Goals:
+
+    > User-selected measurment delivery modes
+        > 1 read
+        > Periodic reads
+        > Depth-activated reads
+        > etc.
+    > Internal Battery management
+        > Measure voltage
+    > Build prototype UI (terminal-style commands over serial)
+
+
+    Long Term Goals:
+
+    > Find out/develop concrete use-cases for sensor package
+        > Use cases for to end-user
+    > Decide on delivery to user
+        > SD card/Internal Storage
+        > Serial
+        > Data Radio
+        > Bluetooth connection
+        > etc.
+
+
+Links:
+
+    Sensor Use case document:
+    https://docs.google.com/document/d/1oTBluc5CXEzSeSb-SR_KXQSh2Zgw1MtRs8IzuibEjN8
+
+    Sensor Test and Calibration Document:
+    https://docs.google.com/document/d/1IG6QW2--BlNknFqRsbM8qlOfcKgexicl__1FPq2o_nE/edit#heading=h.ny5vp0ghyued
+
+    Data Science team document:
+
+    https://docs.google.com/document/d/12zM-jy_i1q-XmQzXvvwT4mxrKElRtTjQt7xu8XVNhUw
+
+
 */
 
 #include <Arduino.h>

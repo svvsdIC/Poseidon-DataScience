@@ -1,8 +1,10 @@
 /*
 
-Defines classes and structures used to read and record data from Atlas sensors.
+File Description:
 
-Header file of sensor.cpp
+    Defines classes and structures used to read and record data from Atlas sensors.
+
+    Header file of sensor.cpp
 
 */
 

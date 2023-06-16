@@ -1,6 +1,9 @@
 /*
 
-Defines the methods and constructors for running AtlasSensors using the Sensor_Base class and its derivatives.
+File Description:
+
+    Defines the methods and constructors for running AtlasSensors using the Sensor_Base
+    class and its derivatives.
 
 */
 
