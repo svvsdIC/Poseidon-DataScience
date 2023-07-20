@@ -13,14 +13,15 @@ Development Roadmap:
 
     Immediate Goals:
 
-    > Better error handling in and out of methods
+    > (done) Better error handling in and out of methods 
+    > Hours/Minutes/Seconds timestamp display (<time.h>)
     > Add More Methods for sensors
         > Full Sleep mode
         > Return current status
         > Calibration
         > etc.
     > Investigate sensor control-board internal memory
-    > Hours/Minutes/Seconds timestamp display (<time.h>)
+    
     > Build prototype ring buffer
 
 
@@ -36,7 +37,7 @@ Development Roadmap:
     > Build prototype UI (terminal-style commands over serial)
 
 
-    Long Term Goals:
+    Long-Term Goals:
 
     > Find out/develop concrete use-cases for sensor package
         > Use cases for to end-user
@@ -66,7 +67,7 @@ Links:
 #include <Arduino.h>
 #include <Wire.h>
 #include "sensor.h"
-
+#include "utilities.h"
 
 // For recieving commands over serial line
 /*
@@ -135,10 +136,15 @@ void loop() {
 
         for(int i = 0; (returnedValues[i].type != INVALID_TYPE) && (returnedValues[i].timeStamp != 0); i++) {
 
+            Serial.print("At time: ");
+            char timeStampString[MAX_TIME_CHARS + 1];
+            formatTime(returnedValues->timeStamp, timeStampString);
+            Serial.print(timeStampString);
+            Serial.print(", ");
             Serial.print(obj.m_displayNames[i]);
             Serial.print(" measured: ");
             Serial.println(returnedValues[i].value);
-           
+            
         }
 
         Serial.print("\n");
@@ -149,6 +155,11 @@ void loop() {
     delay(4000);
 
 }
+
+
+
+
+
 
 
 

@@ -40,12 +40,15 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     char cmd[] = "r"; 
     int responseCode = this->sendI2CMessage(cmd);
 
+    if(responseCode != SUCCESS) {
+        return responseCode;
+    }
+
     double separatedSensorValues[MAX_READINGS_PER_SENSOR + 1];
 
     for(double x : separatedSensorValues) {
         x = (double) 0.00;
     }
-
 
     char sensorData[MAX_SENSOR_DATA + 1] = "";
      
@@ -160,7 +163,7 @@ Sensor_EC::Sensor_EC() : Sensor_Base((int)100, (unsigned long)800) {
 
  // enables all EC reading types to be returned from the sensor,
  // so we get the expected number of return vaues in the expected order.
-void Sensor_EC::enableAllParameters() {
+int Sensor_EC::enableAllParameters() {
 
     #define MAX_DATA_SENT_ON_O_COMMAND (9)
 
@@ -173,13 +176,17 @@ void Sensor_EC::enableAllParameters() {
         };
 
     for(int i = 0; i < (int)( sizeof(cmd) / sizeof(cmd[0]) ) - 1; i++) {
-        int responseCode = sendI2CMessage(cmd[i]);
-
-        Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
-        Wire.endTransmission(true);
         
-
+        
+        int responseCode = sendI2CMessage(cmd[i]);
+        
+        if(responseCode != SUCCESS) {
+            return responseCode;
+        }
+        
     }
+
+    return SUCCESS;
 
 }
 
@@ -230,7 +237,7 @@ Sensor_DO::Sensor_DO() : Sensor_Base((int)97, (unsigned long)575) {
 
 // enables all DO reading types to be returned from the sensor,
 // so we get the expected number of return vaues in the expected order.
-void Sensor_DO::enableAllParameters() {
+int Sensor_DO::enableAllParameters() {
 
     char cmd[][MAX_DATA_SENT_ON_O_COMMAND] = {
         {"O,mg,1"}, 
@@ -242,10 +249,13 @@ void Sensor_DO::enableAllParameters() {
 
         int responseCode = sendI2CMessage(cmd[i]);
 
-        Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
-        Wire.endTransmission(true);
+        if(responseCode != SUCCESS) {
+            return responseCode;
+        }
 
     }
+
+    return SUCCESS;
 
 }
 

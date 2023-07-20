@@ -35,6 +35,18 @@ enum ReadingType
     INVALID_TYPE = -1
 };
 
+// Response codes returned after an I2C command
+enum ResponseCodes 
+{
+
+    NO_RESPONSE = -1,
+    SUCCESS = 1,
+    SYNTAX = 2,
+    NOT_READY = 254,
+    NO_DATA = 255
+
+};
+
 
 // most bytes that can be returned by a sensor
 #define MAX_SENSOR_DATA (32) 
@@ -45,8 +57,10 @@ enum ReadingType
 // Max length of the text display name of a reading type
 #define MAX_READING_NAME_LENGTH (32)
 
-// Max lenght of a command sent to a sensor
+// Max lenghth of a command sent to a sensor
 #define MAX_COMMAND_LENGTH (32)
+
+
 
 // Associates a datapoint with its type, and the time it was measured
 struct SensorValue {
@@ -75,7 +89,7 @@ class Sensor_Base {
 
         // Empty virtual void to make sensors with multiple ReadingTypes
         // return all of the corresponding SensorValues (overridden in subclasses)
-        virtual void enableAllParameters() {};
+        virtual int enableAllParameters() {return SUCCESS;};
 
         Sensor_Base(int address, unsigned long readDelayMS);
 
@@ -93,7 +107,7 @@ class Sensor_EC : public Sensor_Base {
     
     public:
         Sensor_EC();
-        void enableAllParameters();
+        int enableAllParameters();
 
 };
 
@@ -118,7 +132,7 @@ class Sensor_DO : public Sensor_Base {
     
     public:
         Sensor_DO();
-        void enableAllParameters();
+        int enableAllParameters();
 
 
 };
