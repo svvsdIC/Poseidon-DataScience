@@ -1,0 +1,6 @@
+start read (measurementTypes to return, delay between reads)
+start read (measurementTypes to return, delay between reads, total reads)
+stop continuous reading
+read one time(measurementTypes to return)
+sleep all
+return status

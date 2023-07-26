@@ -76,7 +76,7 @@ class Sensor_Base {
         // I2C address of sensor
         int m_address;
 
-        // delay after command before reading data
+        // delay after command before data is available to read
         unsigned long m_readDelayMS;    
 
         // array of the names to display for each ReadingType this sensor returns

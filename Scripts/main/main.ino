@@ -14,13 +14,14 @@ Development Roadmap:
     Immediate Goals:
 
     > (done) Better error handling in and out of methods 
-    > Hours/Minutes/Seconds timestamp display (<time.h>)
+    > (done) Hours/Minutes/Seconds timestamp display
+    > Investigate sensor control-board internal memory
+    > .csv file generation    
     > Add More Methods for sensors
         > Full Sleep mode
         > Return current status
-        > Calibration
         > etc.
-    > Investigate sensor control-board internal memory
+
     
     > Build prototype ring buffer
 
@@ -132,7 +133,9 @@ void loop() {
         int responseCode = obj.read(returnedValues);
         if(responseCode != 1) {
             Serial.print("ERROR: Status Code: ");
-            Serial.println(responseCode);
+            Serial.print(responseCode);
+            Serial.print(" on sensor: ");
+            Serial.println(obj.m_displayNames[0]);
             continue;
         }
 
