@@ -1,3 +1,11 @@
+/*
+
+File Description:
+
+    Header file for utilites.cpp
+
+*/
+
 #ifndef __UTILITIES_H
 #define __UTILITIES_H
 

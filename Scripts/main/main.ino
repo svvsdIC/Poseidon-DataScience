@@ -71,10 +71,12 @@ Links:
 
 // For recieving commands over serial line
 /*
+
 #define RECIEVED_BUFFER_SIZE (32)
 char serialCommand[RECIEVED_BUFFER_SIZE];
 int currentByte = 0;
 bool serialCommandReceived = false;
+
 */
 
 
