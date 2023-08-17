@@ -8,7 +8,7 @@ char fileName[] = "demoFile.txt"; // SD library only supports up to 8.3 names
 char buff[BUFFER_SIZE+2] = "";  // Added two to allow a 2 char peek for EOF state
 uint8_t index = 0;
 
-const uint8_t chipSelect = 8;
+const uint8_t chipSelect = 53;
 const uint8_t cardDetect = 9;
 
 enum states: uint8_t { NORMAL, E, EO };
@@ -76,15 +76,17 @@ void initializeCard(void)
 
   // Card seems to exist.  begin() returns failure
   // even if it worked if it's not the first call.
-  if (!SD.begin(chipSelect) && !alreadyBegan)  // begin uses half-speed...
+
+  bool chipSelectSuccess = SD.begin(chipSelect);
+  if (!chipSelectSuccess && !alreadyBegan)  // begin uses half-speed...
   {
     Serial.println(F("Initialization failed!"));
     initializeCard(); // Possible infinite retry loop is as valid as anything
   }
   else
-    {
+  {
     alreadyBegan = true;
-    }
+  }
   Serial.println(F("Initialization done."));
 
   Serial.print(fileName);
