@@ -32,7 +32,6 @@ Sensor_Base::Sensor_Base(int address, unsigned long readDelayMS) {
         
 }
 
-
 // Reads the specified sensor, returns the status code,
 // and fills in referenced SensorValue array
 int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]) {
