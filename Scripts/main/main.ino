@@ -18,12 +18,12 @@ Development Roadmap:
 
     > (done) Better error handling in and out of methods 
     > (done) Hours/Minutes/Seconds timestamp display
-    > Investigate sensor control-board internal memory
-        > Read and write files reliably on μSD card
+    > (done) Investigate sensor control-board internal memory
+        > (done) Read and write files reliably on μSD card
     > .csv file generation
         > (done) Generate CSV file content 
-        > Create and modify CSV files ion microSD card
-        > Verify CSV files   
+        > (done) Create and modify CSV files ion microSD card
+        > Add logging of recorded data to main.ino 
     > Add More Methods for sensors
         > Sleep
             >  Place at
