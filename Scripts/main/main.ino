@@ -119,9 +119,11 @@ void setup() {
 
     delay(500);
 
+    char csv_header_string[MAX_CSV_ROW_LENGTH];
 
     for(Sensor_Base obj : allSensorInstances) {
         obj.enableAllParameters();
+        //strncat(csv_header_string, strcat(obj.m_displayNames, ","), MAX_CSV_ROW_LENGTH);
     }
     
 }
@@ -160,6 +162,7 @@ void loop() {
 
         for(int i = 0; (returnedValues[i].type != INVALID_TYPE) && (returnedValues[i].timeStamp != 0); i++) {
 
+            // send results back over serial line
             Serial.print("At time: ");
             char timeStampString[MAX_TIME_CHARS + 1];
             formatTime(returnedValues->timeStamp, timeStampString);
@@ -168,8 +171,10 @@ void loop() {
             Serial.print(obj.m_displayNames[i]);
             Serial.print(" measured: ");
             Serial.println(returnedValues[i].value);
-            
+
         }
+
+        // record measurements to SD card
 
         Serial.print("\n");
 
