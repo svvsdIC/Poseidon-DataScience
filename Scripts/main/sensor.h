@@ -61,7 +61,6 @@ enum ResponseCodes
 #define MAX_COMMAND_LENGTH (32)
 
 
-
 // Associates a datapoint with its type, and the time it was measured
 struct SensorValue {
     ReadingType type;

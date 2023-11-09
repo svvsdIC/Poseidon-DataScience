@@ -100,6 +100,9 @@ Sensor_OR obj_OR = Sensor_OR();
 
 Sensor_Base allSensorInstances[] = {obj_OR, obj_EC, obj_DO, obj_PH, obj_TEMP };
 
+const int cardSelect = 4;
+
+
 void setup() {
 
     // Start serial and I2C connections, initialize sensors
@@ -115,6 +118,7 @@ void setup() {
     }
 
     delay(500);
+
 
     for(Sensor_Base obj : allSensorInstances) {
         obj.enableAllParameters();

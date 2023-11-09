@@ -12,13 +12,11 @@ File Description:
 // Maximum length of a formatted time string (hh:mm:ss)
 #define MAX_TIME_CHARS (8)
 
-..#define MAX_DATA_LOG_SIZE (1024)
-
 // The maximum characters in one row of a CSV file
 #define MAX_CSV_ROW_LENGTH (64)
 
 // The maximum characters in the name of a file
-#define MAX_FILE_NAME_LENGTH (16)
+#define MAX_FILE_NAME_LENGTH (32)
 
 //Takes an input in seconds and formats it into the form "hh:mm:ss"
 // then returns it to outputLocation
