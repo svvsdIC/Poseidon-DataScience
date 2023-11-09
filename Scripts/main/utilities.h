@@ -22,7 +22,13 @@ File Description:
 // then returns it to outputLocation
 void formatTime(unsigned long seconds, char (&outputLocation)[MAX_TIME_CHARS + 1]);
 
-// Takes a sensorvalue, returns a row for a CSV file in the format "type,timeStamp,data\n"
-//void create_CSV_Row(SensorValue readingData, char (&outputStringLocation)[MAX_CSV_ROW_LENGTH + 1]);
+// Takes a csv-formatted string.  Creates a unique logfile on the μsd card and writes
+// csv_header to the top of the file.  Returns 99 if writing to existing file (if
+// sensorlog99.csv already exists) or 0 if writing to a new file.  Sends file name to fileNameLocation
+int createLogFile(char csv_header[MAX_CSV_ROW_LENGTH], char (&fileNameLocation)[MAX_FILE_NAME_LENGTH]);
+
+// takes a string of csv data and the name of a file and adds that data plus a line break
+// to the named  file.  Returns 0 for success and 99 for faliure
+int logData(char csv_data[MAX_CSV_ROW_LENGTH], char fileName[MAX_FILE_NAME_LENGTH]);
 
 #endif
