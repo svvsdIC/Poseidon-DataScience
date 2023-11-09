@@ -13,7 +13,10 @@ File Description:
 #define MAX_TIME_CHARS (8)
 
 // The maximum characters in one row of a CSV file
-#define MAX_CSV_ROW_LENGTH (64)
+#define MAX_CSV_ROW_LENGTH (256)
+
+// the header string "Electrical Conductivity,Total Dissolved Solids,Salinity,Specific Gravity,Oxygen Reduction,Dissolved Oxygen Density,Dissolved Oxygen Percent,Potential Hydrogen,Temperature\n"
+// has 171 characters.  Update MAX_CSV_ROW_LENGTH with more parameters.
 
 // The maximum characters in the name of a file
 #define MAX_FILE_NAME_LENGTH (32)
