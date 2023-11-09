@@ -77,6 +77,7 @@ Links:
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
+#include <cmath>
 #include "sensor.h"
 #include "utilities.h"
 
@@ -92,6 +93,7 @@ bool serialCommandReceived = false;
 
 
 // Create an instance of each sensor
+
 Sensor_EC obj_EC = Sensor_EC();
 Sensor_DO obj_DO = Sensor_DO();
 Sensor_TEMP obj_TEMP = Sensor_TEMP();
@@ -101,6 +103,9 @@ Sensor_OR obj_OR = Sensor_OR();
 Sensor_Base allSensorInstances[] = {obj_OR, obj_EC, obj_DO, obj_PH, obj_TEMP };
 
 const int cardSelect = 4;
+
+// the name of the file on the μsd card where the data are recorded
+char logFileName[MAX_FILE_NAME_LENGTH + 1];
 
 
 void setup() {
@@ -118,13 +123,38 @@ void setup() {
     }
 
     delay(500);
+/*
+    int csv_header_size = 0;
 
-    char csv_header_string[MAX_CSV_ROW_LENGTH];
+    // number of readingTypes, total should currently be 10
+    for(Sensor_Base obj : allSensorInstances) {
+        csv_header_size += (sizeof(obj.m_readingTypes) / sizeof(obj.m_readingTypes[0]));
+    }
+    // number of characters in header
+    csv_header_size *= (MAX_READING_NAME_LENGTH + 1);
+
+    // CSV header, sized based on the max reading name length, plus comma, plus \0
+    char temporary_csv_header_string[csv_header_size + 1];*/
+
+    //final header to protect from overflows and fit nicely in our functions
+    char final_csv_header_string[MAX_CSV_ROW_LENGTH + 1] = "Timestamp,Sensor #,Value";
 
     for(Sensor_Base obj : allSensorInstances) {
         obj.enableAllParameters();
-        //strncat(csv_header_string, strcat(obj.m_displayNames, ","), MAX_CSV_ROW_LENGTH);
+        
+        int i = 0;
+        // adds all of each object's reading names to the header of the CSV file
+        /*do { // TODO: handle errors
+            strncat(temporary_csv_header_string, strcat(obj.m_displayNames[i], ","), MAX_READING_NAME_LENGTH + 1);
+            i++;
+        } while(obj.m_readingTypes[i] != INVALID_TYPE);*/
+
     }
+
+    //strncpy(final_csv_header_string, temporary_csv_header_string, MAX_CSV_ROW_LENGTH);
+
+    createLogFile(final_csv_header_string, logFileName); // TODO: add error handling
+
     
 }
 
@@ -153,16 +183,20 @@ void loop() {
         
         int responseCode = obj.read(returnedValues);
         if(responseCode != 1) {
-            Serial.print("ERROR: Status Code: ");
+            Serial.print("ERROR: Sensor error.  Status Code: ");
             Serial.print(responseCode);
             Serial.print(" on sensor: ");
             Serial.println(obj.m_displayNames[0]);
             continue;
         }
 
+        // The data from one cycle through the sensors
+        char single_data_line[MAX_CSV_ROW_LENGTH + 1];
+        
+
         for(int i = 0; (returnedValues[i].type != INVALID_TYPE) && (returnedValues[i].timeStamp != 0); i++) {
 
-            // send results back over serial line
+            // sends results back over serial line
             Serial.print("At time: ");
             char timeStampString[MAX_TIME_CHARS + 1];
             formatTime(returnedValues->timeStamp, timeStampString);
@@ -172,9 +206,18 @@ void loop() {
             Serial.print(" measured: ");
             Serial.println(returnedValues[i].value);
 
+            // "Timestamp,Sensor #,Value"
+
+            char singleValue[MAX_CSV_ROW_LENGTH + 1];
+
+            sprintf(singleValue, strncat(timeStampString,"%0i,%0f", MAX_CSV_ROW_LENGTH), (int) returnedValues[i].type, returnedValues[i].value);
+            logData(singleValue, logFileName);
+
         }
 
-        // record measurements to SD card
+        // TODO: record a line of measurements to SD card here
+        
+
 
         Serial.print("\n");
 
