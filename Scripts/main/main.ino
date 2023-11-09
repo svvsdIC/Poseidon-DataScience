@@ -75,6 +75,8 @@ Links:
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
 #include "sensor.h"
 #include "utilities.h"
 
@@ -106,6 +108,11 @@ void setup() {
     Serial.println("Serial Initialized");
 
     Wire.begin();
+
+    while (!SD.begin(cardSelect)) {
+        Serial.println("ERROR: μSD card initialization failed!");
+        delay(500);
+    }
 
     delay(500);
 
