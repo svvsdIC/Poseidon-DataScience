@@ -77,7 +77,6 @@ Links:
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
-#include <cmath>
 #include "sensor.h"
 #include "utilities.h"
 
