@@ -125,7 +125,7 @@ void setup() {
     delay(500);
 
     //final header to protect from overflows and fit nicely in our functions
-    char final_csv_header_string[MAX_CSV_ROW_LENGTH + 1] = "Timestamp,Sensor #,Value";
+    char final_csv_header_string[MAX_CSV_ROW_LENGTH + 1] = "Timestamp,Reading Type,Value";
 
     for(Sensor_Base obj : allSensorInstances) {
         obj.enableAllParameters();
@@ -186,7 +186,7 @@ void loop() {
             Serial.println(returnedValues[i].value);
 
 
-            // csv rows are "Timestamp,Sensor #,Value"
+            // csv rows are "Timestamp,Reading Type,Value"
 
             char single_csv_line[MAX_CSV_ROW_LENGTH + 1];
             char csv_values[MAX_CSV_ROW_LENGTH + 1];
