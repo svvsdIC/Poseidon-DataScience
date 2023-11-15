@@ -123,35 +123,14 @@ void setup() {
     }
 
     delay(500);
-/*
-    int csv_header_size = 0;
-
-    // number of readingTypes, total should currently be 10
-    for(Sensor_Base obj : allSensorInstances) {
-        csv_header_size += (sizeof(obj.m_readingTypes) / sizeof(obj.m_readingTypes[0]));
-    }
-    // number of characters in header
-    csv_header_size *= (MAX_READING_NAME_LENGTH + 1);
-
-    // CSV header, sized based on the max reading name length, plus comma, plus \0
-    char temporary_csv_header_string[csv_header_size + 1];*/
 
     //final header to protect from overflows and fit nicely in our functions
     char final_csv_header_string[MAX_CSV_ROW_LENGTH + 1] = "Timestamp,Sensor #,Value";
 
     for(Sensor_Base obj : allSensorInstances) {
         obj.enableAllParameters();
-        
-        int i = 0;
-        // adds all of each object's reading names to the header of the CSV file
-        /*do { // TODO: handle errors
-            strncat(temporary_csv_header_string, strcat(obj.m_displayNames[i], ","), MAX_READING_NAME_LENGTH + 1);
-            i++;
-        } while(obj.m_readingTypes[i] != INVALID_TYPE);*/
 
     }
-
-    //strncpy(final_csv_header_string, temporary_csv_header_string, MAX_CSV_ROW_LENGTH);
 
     createLogFile(final_csv_header_string, logFileName); // TODO: add error handling
 
@@ -206,17 +185,22 @@ void loop() {
             Serial.print(" measured: ");
             Serial.println(returnedValues[i].value);
 
-            // "Timestamp,Sensor #,Value"
 
-            char singleValue[MAX_CSV_ROW_LENGTH + 1];
+            // csv rows are "Timestamp,Sensor #,Value"
 
-            sprintf(singleValue, strncat(timeStampString,"%0i,%0f", MAX_CSV_ROW_LENGTH), (int) returnedValues[i].type, returnedValues[i].value);
-            logData(singleValue, logFileName);
+            char single_csv_line[MAX_CSV_ROW_LENGTH + 1];
+            char csv_values[MAX_CSV_ROW_LENGTH + 1];
 
-        }
+            strncpy(single_csv_line, timeStampString, MAX_CSV_ROW_LENGTH);
 
-        // TODO: record a line of measurements to SD card here
-        
+            // add the timestamp to the type and value of each reading in csv format
+            sprintf(csv_values, ",%0i,%0f", (int) returnedValues[i].type, returnedValues[i].value);
+            strncat(single_csv_line, csv_values, MAX_CSV_ROW_LENGTH);
+
+            // record data on SD card
+            logData(single_csv_line, logFileName);
+
+        }        
 
 
         Serial.print("\n");
