@@ -56,11 +56,11 @@ int logData(char csv_data[MAX_CSV_ROW_LENGTH + 1], char fileName[MAX_FILE_NAME_L
 // sensorlog99.csv already exists) or 0 if writing to a new file.  Sends file name to fileNameLocation
 int createLogFile(char csv_header[MAX_CSV_ROW_LENGTH+ 1], char (&fileNameLocation)[MAX_FILE_NAME_LENGTH + 1]) {
     char fileName[MAX_FILE_NAME_LENGTH + 1];
-    strncpy(fileName, "/sensorlog00.csv", MAX_FILE_NAME_LENGTH);
+    strncpy(fileName, "/data00.csv", MAX_FILE_NAME_LENGTH);
 
     for (uint8_t i = 0; i < 100; i++) {
-        fileName[10] = '0' + i/10;
-        fileName[11] = '0' + i%10;
+        fileName[5] = '0' + i/10;
+        fileName[6] = '0' + i%10;
         // create if does not exist, do not open existing, write, sync after write
         if (! SD.exists(fileName)) {
             break;
