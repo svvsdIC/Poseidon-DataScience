@@ -116,10 +116,10 @@ void setup() {
 
     Wire.begin();
 
-    while (!SD.begin(cardSelect)) {
+    /*while (!SD.begin(cardSelect)) {
         Serial.println("ERROR: μSD card initialization failed!");
         delay(500);
-    }
+    }*/
 
     delay(500);
 
@@ -156,23 +156,19 @@ void loop() {
             returnedValues[i].timeStamp = 0;
             returnedValues[i].value = 0;
             returnedValues[i].type = INVALID_TYPE;
-            
         }
         
         int responseCode = obj.read(returnedValues);
+
         if(responseCode != 1) {
             Serial.print("ERROR: Sensor error.  Status Code: ");
             Serial.print(responseCode);
             Serial.print(" on sensor: ");
             Serial.println(obj.m_displayNames[0]);
             continue;
-        }
+        }        
 
-        // The data from one cycle through the sensors
-        char single_data_line[MAX_CSV_ROW_LENGTH + 1];
-        
-
-        for(int i = 0; (returnedValues[i].type != INVALID_TYPE) && (returnedValues[i].timeStamp != 0); i++) {
+        for(int i = 0; (returnedValues[i].type != INVALID_TYPE); i++) {
 
             // sends results back over serial line
             Serial.print("At time: ");
@@ -186,19 +182,35 @@ void loop() {
 
 
             // csv rows are "Timestamp,Reading Type,Value"
-
+/*
             char single_csv_line[MAX_CSV_ROW_LENGTH + 1];
             char csv_values[MAX_CSV_ROW_LENGTH + 1];
 
             strncpy(single_csv_line, timeStampString, MAX_CSV_ROW_LENGTH);
 
+            Serial.print("DEBUG: Step one:");
+            Serial.println(single_csv_line);
+
+            Serial.print("DEBUG: returnedValues[i].type:");
+            Serial.println(returnedValues[i].type);
+
+            Serial.print("\nDEBUG: returnedValues[i].value:");
+            Serial.println(returnedValues[i].value);
+
             // add the timestamp to the type and value of each reading in csv format
-            sprintf(csv_values, ",%0i,%0f", (int) returnedValues[i].type, returnedValues[i].value);
+            sprintf(csv_values, ",%0i,%0lf", (int) (returnedValues[i].type), returnedValues[i].value);
+
+            Serial.print("DEBUG: Step two:");
+            Serial.println(csv_values);
+
             strncat(single_csv_line, csv_values, MAX_CSV_ROW_LENGTH);
+
+            Serial.print("DEBUG: Step three:");
+            Serial.println(single_csv_line);
 
             // record data on SD card
             logData(single_csv_line, logFileName);
-
+*/
         }        
 
 
