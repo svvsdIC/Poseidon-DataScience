@@ -77,8 +77,10 @@ Links:
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
+#include <math.h>
 #include "sensor.h"
 #include "utilities.h"
+
 
 // For recieving commands over serial line
 /*
@@ -109,6 +111,8 @@ char logFileName[MAX_FILE_NAME_LENGTH + 1];
 
 void setup() {
 
+    while(!Serial);
+
     // Start serial and I2C connections, initialize sensors
 
     Serial.begin(9600);
@@ -116,10 +120,10 @@ void setup() {
 
     Wire.begin();
 
-    /*while (!SD.begin(cardSelect)) {
+    while (!SD.begin(cardSelect)) {
         Serial.println("ERROR: μSD card initialization failed!");
         delay(500);
-    }*/
+    }
 
     delay(500);
 
@@ -182,35 +186,26 @@ void loop() {
 
 
             // csv rows are "Timestamp,Reading Type,Value"
-/*
+
             char single_csv_line[MAX_CSV_ROW_LENGTH + 1];
             char csv_values[MAX_CSV_ROW_LENGTH + 1];
 
             strncpy(single_csv_line, timeStampString, MAX_CSV_ROW_LENGTH);
 
-            Serial.print("DEBUG: Step one:");
-            Serial.println(single_csv_line);
+            char valueString[MAX_CSV_ROW_LENGTH + 1];
 
-            Serial.print("DEBUG: returnedValues[i].type:");
-            Serial.println(returnedValues[i].type);
-
-            Serial.print("\nDEBUG: returnedValues[i].value:");
-            Serial.println(returnedValues[i].value);
+            
 
             // add the timestamp to the type and value of each reading in csv format
-            sprintf(csv_values, ",%0i,%0lf", (int) (returnedValues[i].type), returnedValues[i].value);
+            sprintf(csv_values, ",%i,%s", (returnedValues[i].type), String(returnedValues[i].value, 5).c_str());
 
-            Serial.print("DEBUG: Step two:");
-            Serial.println(csv_values);
 
             strncat(single_csv_line, csv_values, MAX_CSV_ROW_LENGTH);
 
-            Serial.print("DEBUG: Step three:");
-            Serial.println(single_csv_line);
 
             // record data on SD card
             logData(single_csv_line, logFileName);
-*/
+
         }        
 
 
