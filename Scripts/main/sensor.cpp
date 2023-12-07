@@ -288,7 +288,7 @@ Sensor_TEMP::Sensor_TEMP() : Sensor_Base((int)102, (unsigned long)815) {
 
     // populate m_readingTypes and associated m_displayNames
 
-    this->m_readingTypes[0] = PH;
+    this->m_readingTypes[0] = TEMP;
     strncpy(this->m_displayNames[0], "Temperature", MAX_READING_NAME_LENGTH);
 
     this->m_readingTypes[1] = INVALID_TYPE;
