@@ -87,7 +87,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     SensorValue sensorReturnValues[MAX_READINGS_PER_SENSOR + 1]; 
 
     // Initialize sensorReturnValues as a termination indicator for loops
-    for(int j = 0; j <= MAX_READINGS_PER_SENSOR + 1; j++) {
+    for(int j = 0; j < MAX_READINGS_PER_SENSOR + 1; j++) {
 
         sensorReturnValues[j].type = INVALID_TYPE; 
         sensorReturnValues[j].value = (0);
@@ -96,7 +96,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     }
 
     // Fill in every relevant value of sensorReturnValues with the value returned by the sensor
-    for(int j = 0; this->m_readingTypes[j] != INVALID_TYPE && j < MAX_READINGS_PER_SENSOR; j++) {
+    for(int j = 0; (this->m_readingTypes[j] != INVALID_TYPE) && (j < MAX_READINGS_PER_SENSOR); j++) {
         
         sensorReturnValues[j].type = (ReadingType) (m_readingTypes[j]);
         sensorReturnValues[j].value = separatedSensorValues[j];
