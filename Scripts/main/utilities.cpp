@@ -31,22 +31,22 @@ void formatTime(unsigned long seconds, char (&outputLocation)[MAX_TIME_CHARS + 1
 
 }
 
-// takes a string of csv data and the name of a file and adds that data plus a line break
+// takes a string of and the name of a file and adds that data plus a line break
 // to the named  file.  Returns 0 for success and 99 for faliure
-int logData(char csv_data[MAX_CSV_ROW_LENGTH + 1], char fileName[MAX_FILE_NAME_LENGTH + 1]) {
+int writeLineToFile(char text_line[MAX_FILE_ROW_LENGTH + 1], char fileName[MAX_FILE_NAME_LENGTH]) {
 
-    File logFile;
+    File dataFile;
     
-    logFile = SD.open(fileName, FILE_WRITE);
-	if( !logFile ) {
+    dataFile = SD.open(fileName, FILE_WRITE);
+	if( !dataFile ) {
 		Serial.print("Could not open "); 
 		Serial.println(fileName);
 		return 99;
 	}
 
-    logFile.println(csv_data);
+    dataFile.println(text_line);
 
-    logFile.close();
+    dataFile.close();
 
     return 0;
 
@@ -54,8 +54,8 @@ int logData(char csv_data[MAX_CSV_ROW_LENGTH + 1], char fileName[MAX_FILE_NAME_L
 // Takes a csv-formatted string.  Creates a unique logfile on the μsd card and writes
 // csv_header to the top of the file.  Returns 99 if writing to existing file (if
 // sensorlog99.csv already exists) or 0 if writing to a new file.  Sends file name to fileNameLocation
-int createLogFile(char csv_header[MAX_CSV_ROW_LENGTH+ 1], char (&fileNameLocation)[MAX_FILE_NAME_LENGTH + 1]) {
-    char fileName[MAX_FILE_NAME_LENGTH + 1];
+int createDataFile(char csv_header[MAX_FILE_ROW_LENGTH+ 1], char (&fileNameLocation)[MAX_FILE_NAME_LENGTH]) {
+    char fileName[MAX_FILE_NAME_LENGTH];
     strncpy(fileName, "/data00.csv", MAX_FILE_NAME_LENGTH);
 
     for (uint8_t i = 0; i < 100; i++) {
@@ -69,13 +69,14 @@ int createLogFile(char csv_header[MAX_CSV_ROW_LENGTH+ 1], char (&fileNameLocatio
 
     strncpy(fileNameLocation, fileName, MAX_FILE_NAME_LENGTH);
 
-    logData(csv_header, fileName);
+    writeLineToFile(csv_header, fileName);
     if (SD.exists(fileName)) {
         return 99;
     } else {
         return 0;
     }
 }
+
 /*
 // Takes a sensorvalue, returns a row for a CSV file in the format "type,timeStamp,data\n"
 void create_CSV_Row(SensorValue readingData, char (&outputStringLocation)[MAX_CSV_ROW_LENGTH + 1]) {

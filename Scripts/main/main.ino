@@ -77,9 +77,9 @@ Links:
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
-#include <math.h>
 #include "sensor.h"
 #include "utilities.h"
+#include "eventlogger.h"
 
 
 // For recieving commands over serial line
@@ -92,6 +92,8 @@ bool serialCommandReceived = false;
 
 */
 
+
+Event_Logger obj_EventLogger = Event_Logger("EVENTLOG.txt");
 
 // Create an instance of each sensor
 
@@ -106,10 +108,24 @@ Sensor_Base allSensorInstances[] = {obj_OR, obj_EC, obj_DO, obj_PH, obj_TEMP };
 const int cardSelect = 4;
 
 // the name of the file on the μsd card where the data are recorded
-char logFileName[MAX_FILE_NAME_LENGTH + 1];
+char dataFileName[MAX_FILE_NAME_LENGTH];
+
 
 
 void setup() {
+
+
+    while (!SD.begin(cardSelect)) {
+        Serial.println("ERROR: μSD card initialization failed!");
+        delay(500);
+    }
+
+    delay(500);
+
+    createDataFile(SENSOR_CSV_HEADER, dataFileName); // TODO: add error handling
+
+    obj_EventLogger.LogEvent("\n******************************\nProgram Start");
+    //obj_EventLogger.LogError("I forgot the error.");
 
     while(!Serial);
 
@@ -120,24 +136,13 @@ void setup() {
 
     Wire.begin();
 
-    while (!SD.begin(cardSelect)) {
-        Serial.println("ERROR: μSD card initialization failed!");
-        delay(500);
-    }
 
-    delay(500);
 
-    //final header to protect from overflows and fit nicely in our functions
-    char final_csv_header_string[MAX_CSV_ROW_LENGTH + 1] = "Timestamp,Reading Type,Value";
 
     for(Sensor_Base obj : allSensorInstances) {
         obj.enableAllParameters();
-
     }
 
-    createLogFile(final_csv_header_string, logFileName); // TODO: add error handling
-
-    
 }
 
 void loop() {
@@ -187,24 +192,24 @@ void loop() {
 
             // csv rows are "Timestamp,Reading Type,Value"
 
-            char single_csv_line[MAX_CSV_ROW_LENGTH + 1];
-            char csv_values[MAX_CSV_ROW_LENGTH + 1];
+            char single_csv_line[MAX_FILE_ROW_LENGTH + 1];
+            char csv_values[MAX_FILE_ROW_LENGTH + 1];
 
-            strncpy(single_csv_line, timeStampString, MAX_CSV_ROW_LENGTH);
+            strncpy(single_csv_line, timeStampString, MAX_FILE_ROW_LENGTH);
 
-            char valueString[MAX_CSV_ROW_LENGTH + 1];
+            char valueString[MAX_FILE_ROW_LENGTH + 1];
 
             
 
             // add the timestamp to the type and value of each reading in csv format
-            sprintf(csv_values, ",%i,%s", (returnedValues[i].type), String(returnedValues[i].value, 5).c_str());
+            sprintf(csv_values, ",%s,%s", (obj.m_displayNames[i]), String(returnedValues[i].value, 5).c_str());
 
 
-            strncat(single_csv_line, csv_values, MAX_CSV_ROW_LENGTH);
+            strncat(single_csv_line, csv_values, MAX_FILE_ROW_LENGTH);
 
 
             // record data on SD card
-            logData(single_csv_line, logFileName);
+            writeLineToFile(single_csv_line, dataFileName);
 
         }        
 

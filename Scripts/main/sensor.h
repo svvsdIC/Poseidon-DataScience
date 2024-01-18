@@ -60,6 +60,8 @@ enum ResponseCodes
 // Max lenghth of a command sent to a sensor
 #define MAX_COMMAND_LENGTH (32)
 
+// The header to be printed at the top of the sensor data csv file
+static char SENSOR_CSV_HEADER[] = "Timestamp,Reading Type,Value";
 
 // Associates a datapoint with its type, and the time it was measured
 struct SensorValue {
