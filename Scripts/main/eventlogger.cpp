@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <SD.h>
-
 #include "eventlogger.h"
 #include "utilities.h"
 
-Event_Logger::Event_Logger(char fileName[MAX_FILE_NAME_LENGTH]) {
+Event_Logger::Event_Logger(char fileName[MAX_FILE_NAME_LENGTH], bool sendLogsOnSerial) {
     strncpy(this->m_fileName, "EVENTLOG.txt", MAX_FILE_NAME_LENGTH);
+    m_sendLogsOnSerial = sendLogsOnSerial;
 }
 
 
@@ -30,8 +30,13 @@ void Event_Logger::LogError(char * errorText) {
 
     eventLogFile.println(errorLine);
 
+    if(m_sendLogsOnSerial) {
+        Serial.println(errorLine);
+    }
+
     eventLogFile.close();
 }
+
 
 void Event_Logger::LogEvent(char * eventText) {
     File eventLogFile;
@@ -52,6 +57,10 @@ void Event_Logger::LogEvent(char * eventText) {
     snprintf(eventLine, MAX_FILE_ROW_LENGTH, "%s EVENT: %s", timeStamp, eventText);
 
     eventLogFile.println(eventLine);
+
+    if(m_sendLogsOnSerial) {
+        Serial.println(eventLine);
+    }
 
     eventLogFile.close();
 }

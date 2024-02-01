@@ -8,8 +8,10 @@ class Event_Logger {
     public:
         
         char m_fileName[MAX_FILE_NAME_LENGTH];
+        
+        bool m_sendLogsOnSerial;
 
-        Event_Logger(char fileName[MAX_FILE_NAME_LENGTH]);
+        Event_Logger(char fileName[MAX_FILE_NAME_LENGTH], bool sendLogsOnSerial);
 
         void LogError(char * errorText);
 
