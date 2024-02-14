@@ -76,12 +76,3 @@ int createDataFile(char csv_header[MAX_FILE_ROW_LENGTH+ 1], char (&fileNameLocat
         return 0;
     }
 }
-
-/*
-// Takes a sensorvalue, returns a row for a CSV file in the format "type,timeStamp,data\n"
-void create_CSV_Row(SensorValue readingData, char (&outputStringLocation)[MAX_CSV_ROW_LENGTH + 1]) {
-    char finalCSVRow[MAX_CSV_ROW_LENGTH + 1];
-    sprintf(finalCSVRow, "%0i,%0lu,%0lf\n", (int) readingData.type, readingData.timeStamp, readingData.value);
-    strncpy(outputStringLocation, finalCSVRow, MAX_CSV_ROW_LENGTH);
-}
-*/

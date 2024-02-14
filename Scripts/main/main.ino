@@ -161,7 +161,7 @@ void loop() {
 
     // For recieving comands over serial line
     if(Serial.available()) {
-        while(Serial.available()) {
+        while( (Serial.available()) && (currentByte < MAX_COMMAND_LENGTH + 1) ) {
             serialCommand[currentByte] = Serial.read();
             currentByte++;
         }
