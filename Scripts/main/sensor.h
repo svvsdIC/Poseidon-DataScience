@@ -44,7 +44,6 @@ enum ResponseCodes
     SYNTAX = 2,
     NOT_READY = 254,
     NO_DATA = 255
-
 };
 
 
@@ -58,7 +57,7 @@ enum ResponseCodes
 #define MAX_READING_NAME_LENGTH (32)
 
 // Max lenghth of a command sent to a sensor
-#define MAX_COMMAND_LENGTH (32)
+#define MAX_SENSOR_COMMAND_LENGTH (32)
 
 // The header to be printed at the top of the sensor data csv file
 static char SENSOR_CSV_HEADER[] = "Timestamp,Reading Type,Value";
@@ -95,7 +94,7 @@ class Sensor_Base {
         Sensor_Base(int address, unsigned long readDelayMS);
 
     protected:
-        int sendI2CMessage(char cmd[MAX_COMMAND_LENGTH + 1]);
+        int sendI2CMessage(char cmd[MAX_SENSOR_COMMAND_LENGTH + 1]);
 
     // TODO: add calibrate(), sleep(), status(), etc.
 

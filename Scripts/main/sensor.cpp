@@ -117,7 +117,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
 
 
 // Sends a character string command for a specific sensor over I2C, then returns the response code.
-int Sensor_Base::sendI2CMessage(char cmd[MAX_COMMAND_LENGTH + 1]) {
+int Sensor_Base::sendI2CMessage(char cmd[MAX_SENSOR_COMMAND_LENGTH + 1]) {
     Wire.beginTransmission(this->m_address);                         
     Wire.write( cmd );                                                    
     Wire.endTransmission(true);

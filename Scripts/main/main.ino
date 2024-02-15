@@ -80,7 +80,7 @@ Links:
 #include "sensor.h"
 #include "utilities.h"
 #include "eventlogger.h"
-
+#include "serialcommand.h"
 
 // For recieving commands over serial line
 
@@ -161,7 +161,7 @@ void loop() {
 
     // For recieving comands over serial line
     if(Serial.available()) {
-        while( (Serial.available()) && (currentByte < MAX_COMMAND_LENGTH + 1) ) {
+        while( (Serial.available()) && (currentByte < MAX_SERIAL_COMMAND_LENGTH + 1) ) {
             serialCommand[currentByte] = Serial.read();
             currentByte++;
         }
@@ -183,6 +183,10 @@ void loop() {
    } else {
         // TODO: replace with response to active serial command
         read_all_sensors();
+
+        char test_parameters[MAX_COMMAND_PARAMETERS][MAX_PARAMETER_LENGTH + 1];
+        SerialCommand_Status obj_test = SerialCommand_Status(test_parameters);
+        Serial.println(obj_test.executeCommand());
         delay(4000);
    }
 
