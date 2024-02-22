@@ -84,8 +84,8 @@ Links:
 
 // For recieving commands over serial line
 
-#define RECIEVED_BUFFER_SIZE (32)
-char serialCommand[RECIEVED_BUFFER_SIZE];
+char serialCommand[MAX_SERIAL_COMMAND_LENGTH + 1];
+bool serialCommandReady = false;
 int currentByte = 0;
 
 
@@ -161,17 +161,33 @@ void loop() {
 
     // For recieving comands over serial line
     if(Serial.available()) {
-        while( (Serial.available()) && (currentByte < MAX_SERIAL_COMMAND_LENGTH + 1) ) {
+        while( (Serial.available())) {
             serialCommand[currentByte] = Serial.read();
             currentByte++;
+
+            if (currentByte >= MAX_SERIAL_COMMAND_LENGTH + 1)  {
+                obj_EventLogger.LogError("Serial command exceeded maximum number of characters");
+                currentByte = 0;
+                Serial.flush();
+                break; 
+            }
+
         }
 
-        // TODO: add command parser here
+        if(serialCommand[currentByte] == '\r') {
 
-        // test echo
-        Serial.print("Command recieved: ");
-        Serial.println(serialCommand);
-        Serial.println("Did: Nothing");
+            currentByte = 0;
+        
+            // TODO: add command parser here
+
+            // test echo
+            Serial.print("Command recieved: ");
+            Serial.println(serialCommand);
+            Serial.println("Did: Nothing");
+            
+        }
+
+        
 
     }
     
@@ -184,9 +200,6 @@ void loop() {
         // TODO: replace with response to active serial command
         read_all_sensors();
 
-        char test_parameters[MAX_COMMAND_PARAMETERS][MAX_PARAMETER_LENGTH + 1];
-        SerialCommand_Status obj_test = SerialCommand_Status(test_parameters);
-        Serial.println(obj_test.executeCommand());
         delay(4000);
    }
 

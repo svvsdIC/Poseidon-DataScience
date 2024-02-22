@@ -11,11 +11,11 @@ class Event_Logger {
         
         bool m_sendLogsOnSerial;
 
-        Event_Logger(char fileName[MAX_FILE_NAME_LENGTH], bool sendLogsOnSerial);
+        Event_Logger(const char fileName[MAX_FILE_NAME_LENGTH], bool sendLogsOnSerial);
 
-        void LogError(char * errorText);
+        void LogError(const char * errorText);
 
-        void LogEvent(char * eventText);
+        void LogEvent(const char * eventText);
 };
 
 

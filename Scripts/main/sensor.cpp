@@ -60,7 +60,9 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
         if(recievedByte == ',') {
             // comma; end of individual value
             separatedSensorValues[j] = atof(sensorData);
-            sensorData[0] = 0x00;
+            for (int k = 0; k < MAX_SENSOR_DATA + 1; k++) {
+                sensorData[k] = '\0';
+            }
 
             // we want to start at character 0 next time we get here,
             // so i is set to -1 since i increments before we get here.

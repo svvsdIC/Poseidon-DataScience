@@ -1,0 +1,16 @@
+start_read,measurementTypes to return (all if blank),delay between reads,total reads (continuous if blank)
+
+stop_reading
+
+read_one_time,measurementTypes to return (all if blank)
+
+sensor_statuses
+
+serial_logging,on/off
+
+set time/date,time/date string
+
+dump_event_log
+
+dump_csv
+

@@ -4,13 +4,13 @@
 #include "eventlogger.h"
 #include "utilities.h"
 
-Event_Logger::Event_Logger(char fileName[MAX_FILE_NAME_LENGTH], bool sendLogsOnSerial) {
-    strncpy(this->m_fileName, "EVENTLOG.txt", MAX_FILE_NAME_LENGTH);
+Event_Logger::Event_Logger(const char fileName[MAX_FILE_NAME_LENGTH], bool sendLogsOnSerial) {
+    strncpy(this->m_fileName, fileName, MAX_FILE_NAME_LENGTH);
     m_sendLogsOnSerial = sendLogsOnSerial;
 }
 
 
-void Event_Logger::LogError(char * errorText) {
+void Event_Logger::LogError(const char * errorText) {
     File eventLogFile;
     
     eventLogFile = SD.open(m_fileName, FILE_WRITE);
@@ -38,7 +38,7 @@ void Event_Logger::LogError(char * errorText) {
 }
 
 
-void Event_Logger::LogEvent(char * eventText) {
+void Event_Logger::LogEvent(const char * eventText) {
     File eventLogFile;
     
     eventLogFile = SD.open(m_fileName, FILE_WRITE);

@@ -1,9 +1,0 @@
-start read (measurementTypes to return, delay between reads)
-start read (measurementTypes to return, delay between reads, total reads)
-stop continuous reading
-read one time(measurementTypes to return)
-return sensor statuses
-turn on/off event logging on serial line
-set time/date
-dump event log over serial line
-dump csv over serial line
