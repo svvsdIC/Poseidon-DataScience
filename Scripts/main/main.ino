@@ -114,6 +114,8 @@ char dataFileName[MAX_FILE_NAME_LENGTH];
 
 void setup() {
 
+
+
     // Initialize μSD card
     while (!SD.begin(cardSelect)) {
         if(obj_EventLogger.m_sendLogsOnSerial) {
@@ -161,8 +163,12 @@ void loop() {
 
     // For recieving comands over serial line
     if(Serial.available()) {
+
+        currentByte = 0;
+
         while( (Serial.available())) {
             serialCommand[currentByte] = Serial.read();
+
             currentByte++;
 
             if (currentByte >= MAX_SERIAL_COMMAND_LENGTH + 1)  {
@@ -174,7 +180,9 @@ void loop() {
 
         }
 
-        if(serialCommand[currentByte] == '\r') {
+        if(serialCommand[currentByte - 1] == '\r') {
+
+            serialCommand[currentByte - 1] = '\0';
 
             currentByte = 0;
         
