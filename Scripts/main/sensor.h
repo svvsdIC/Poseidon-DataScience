@@ -59,6 +59,9 @@ enum ResponseCodes
 // Max lenghth of a command sent to a sensor
 #define MAX_SENSOR_COMMAND_LENGTH (32)
 
+// Maximum number of sensors controlled by the package
+#define MAX_NUMBER_OF_SENSORS (8)
+
 // The header to be printed at the top of the sensor data csv file
 static char SENSOR_CSV_HEADER[] = "Timestamp,Reading Type,Value";
 
@@ -75,6 +78,10 @@ class Sensor_Base {
     public:
         // I2C address of sensor
         int m_address;
+
+        static Sensor_Base * m_ListOfSensorObjects[MAX_NUMBER_OF_SENSORS];
+
+        static int m_numberOfSensors;
 
         // delay after command before data is available to read
         unsigned long m_readDelayMS;    
@@ -93,7 +100,6 @@ class Sensor_Base {
 
         Sensor_Base(int address, unsigned long readDelayMS);
 
-    protected:
         int sendI2CMessage(char cmd[MAX_SENSOR_COMMAND_LENGTH + 1]);
 
     // TODO: add calibrate(), sleep(), status(), etc.

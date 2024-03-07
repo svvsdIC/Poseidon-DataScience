@@ -17,7 +17,8 @@ class SerialCommand {
         int parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]);
     protected:
         char m_parameters[MAX_COMMAND_PARAMETERS][MAX_PARAMETER_LENGTH + 1];
-        // all executions of commands
+        
+        int checkStatus();
 
 
 };

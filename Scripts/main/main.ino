@@ -88,8 +88,9 @@ char serialCommand[MAX_SERIAL_COMMAND_LENGTH + 1];
 bool serialCommandReady = false;
 int currentByte = 0;
 
-
-
+// Defines the static variables used to keep track of sensor objects
+int Sensor_Base::m_numberOfSensors = 0;
+Sensor_Base* Sensor_Base::m_ListOfSensorObjects[MAX_NUMBER_OF_SENSORS] = {};
 
 Event_Logger obj_EventLogger = Event_Logger("EVENTLOG.txt", false);
 
@@ -101,7 +102,7 @@ Sensor_TEMP obj_TEMP = Sensor_TEMP();
 Sensor_PH obj_PH = Sensor_PH();
 Sensor_OR obj_OR = Sensor_OR();
 
-Sensor_Base allSensorInstances[] = {obj_OR, obj_EC, obj_DO, obj_PH, obj_TEMP };
+//Sensor_Base allSensorInstances[] = {obj_OR, obj_EC, obj_DO, obj_PH, obj_TEMP };
 
 const int cardSelect = 4;
 
@@ -153,8 +154,8 @@ void setup() {
 
     
     // Activate reading for all readingtypes of each sensor
-    for(Sensor_Base obj : allSensorInstances) {
-        obj.enableAllParameters();
+    for(Sensor_Base * obj : Sensor_Base::m_ListOfSensorObjects) {
+        obj->enableAllParameters();
     }
     
 }
@@ -215,7 +216,7 @@ void loop() {
 
 
 void read_all_sensors() {
-    for(Sensor_Base obj : allSensorInstances) {
+    for(Sensor_Base *obj : Sensor_Base::m_ListOfSensorObjects) {
 
         SensorValue returnedValues[MAX_READINGS_PER_SENSOR + 1];
 
@@ -225,7 +226,7 @@ void read_all_sensors() {
             returnedValues[i].type = INVALID_TYPE;
         }
         
-        int responseCode = obj.read(returnedValues);
+        int responseCode = obj->read(returnedValues);
 
         if(responseCode != 1) {
 
@@ -235,7 +236,7 @@ void read_all_sensors() {
                         MAX_FILE_ROW_LENGTH,
                         "Sensor Response Code: %i on sensor: %s",
                         responseCode,
-                        obj.m_displayNames[0]);
+                        obj->m_displayNames[0]);
 
             obj_EventLogger.LogError(errorLine);
 
@@ -251,7 +252,7 @@ void read_all_sensors() {
                 Serial.print("At time: ");
                 Serial.print(timeStampString);
                 Serial.print(", ");
-                Serial.print(obj.m_displayNames[i]);
+                Serial.print(obj->m_displayNames[i]);
                 Serial.print(" measured: ");
                 Serial.println(returnedValues[i].value);
             }
@@ -269,7 +270,7 @@ void read_all_sensors() {
             
 
             // add the timestamp to the type and value of each reading in csv format
-            sprintf(csv_values, ",%s,%s", (obj.m_displayNames[i]), String(returnedValues[i].value, 5).c_str());
+            sprintf(csv_values, ",%s,%s", (obj->m_displayNames[i]), String(returnedValues[i].value, 5).c_str());
 
 
             strncat(single_csv_line, csv_values, MAX_FILE_ROW_LENGTH);

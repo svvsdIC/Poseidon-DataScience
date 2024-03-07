@@ -6,6 +6,7 @@
 SerialCommand::SerialCommand() {}
 
 
+
 int SerialCommand::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
     char commandCaps[MAX_SERIAL_COMMAND_LENGTH + 1];
 
@@ -26,16 +27,19 @@ int SerialCommand::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
 
         char recievedByte = commandCaps[i];
 
-        if(recievedByte == ',') {
+        if(recievedByte != ',') { 
+        
+            // add byte to data string
+            parameter[i] = recievedByte;
+        
+        } else { // is a comma
             
             if(p >= MAX_COMMAND_PARAMETERS) {
                 // too may commas
                 // TODO: add error response based on return
                 return 999;
-            } else if(p == 0) {
-                strncpy(commandName, parameter, MAX_PARAMETER_LENGTH);
             } else {
-                strncpy(m_parameters[p - 1], parameter, MAX_PARAMETER_LENGTH);
+                strncpy(m_parameters[p], parameter, MAX_PARAMETER_LENGTH);
             }
 
             for (int k = 0; k < MAX_PARAMETER_LENGTH + 1; k++) {
@@ -47,12 +51,8 @@ int SerialCommand::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
             i = -1;
             p++;
 
-        } else {
+        } 
 
-            // add byte to data string
-            parameter[i] = recievedByte;
-
-        }
 
         if(recievedByte == '\0') {
             // end of string
@@ -63,7 +63,7 @@ int SerialCommand::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
     }
 
 
-    if(commandName == "command name") {
+    if(m_parameters[0] == "STATUS") {
         Serial.println(commandName);
         Serial.println(m_parameters[0]);
     // execute corresponding method
@@ -81,3 +81,11 @@ int SerialCommand::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
 }
 
 
+// **************************** Commands below this point *************************
+
+int SerialCommand::checkStatus() {
+
+
+    return 0;
+
+}

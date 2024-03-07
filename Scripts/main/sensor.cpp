@@ -19,6 +19,10 @@ File Description:
 // Constructor for the Sensor_Base class
 Sensor_Base::Sensor_Base(int address, unsigned long readDelayMS) {
 
+    m_ListOfSensorObjects[m_numberOfSensors] = this;
+
+    m_numberOfSensors++;
+
     m_address = address;
     m_readDelayMS = readDelayMS;
 
