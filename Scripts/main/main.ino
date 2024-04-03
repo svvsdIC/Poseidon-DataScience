@@ -90,6 +90,7 @@ int currentByte = 0;
 
 // Defines the static variables used to keep track of sensor objects
 int Sensor_Base::m_numberOfSensors = 0;
+
 Sensor_Base* Sensor_Base::m_ListOfSensorObjects[MAX_NUMBER_OF_SENSORS] = {};
 
 Event_Logger obj_EventLogger = Event_Logger("EVENTLOG.txt", false);
@@ -103,6 +104,8 @@ Sensor_PH obj_PH = Sensor_PH();
 Sensor_OR obj_OR = Sensor_OR();
 
 //Sensor_Base allSensorInstances[] = {obj_OR, obj_EC, obj_DO, obj_PH, obj_TEMP };
+
+
 
 const int cardSelect = 4;
 
@@ -152,15 +155,26 @@ void setup() {
     // Start I2C
     Wire.begin();
 
-    
+
+
+
     // Activate reading for all readingtypes of each sensor
     for(Sensor_Base * obj : Sensor_Base::m_ListOfSensorObjects) {
+
+        if(!obj) {
+            break;
+        }
+
         obj->enableAllParameters();
     }
+
+    Serial.println("made it to end of setup");
     
 }
 
 void loop() {
+
+    Serial.println("made it to start of looop");
 
     // For recieving comands over serial line
     if(Serial.available()) {
@@ -217,6 +231,11 @@ void loop() {
 
 void read_all_sensors() {
     for(Sensor_Base *obj : Sensor_Base::m_ListOfSensorObjects) {
+
+        if(!obj) {
+            break;
+        }
+
 
         SensorValue returnedValues[MAX_READINGS_PER_SENSOR + 1];
 

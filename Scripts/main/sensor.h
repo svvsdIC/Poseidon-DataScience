@@ -88,7 +88,6 @@ class Sensor_Base {
 
         // array of the names to display for each ReadingType this sensor returns
         char m_displayNames[MAX_READINGS_PER_SENSOR + 1][MAX_READING_NAME_LENGTH + 1];
-
         //Array of the ReadingTypes this sensor returns
         ReadingType m_readingTypes[MAX_READINGS_PER_SENSOR + 1]; 
                 
