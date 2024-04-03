@@ -155,9 +155,6 @@ void setup() {
     // Start I2C
     Wire.begin();
 
-
-
-
     // Activate reading for all readingtypes of each sensor
     for(Sensor_Base * obj : Sensor_Base::m_ListOfSensorObjects) {
 
@@ -167,14 +164,10 @@ void setup() {
 
         obj->enableAllParameters();
     }
-
-    Serial.println("made it to end of setup");
     
 }
 
 void loop() {
-
-    Serial.println("made it to start of looop");
 
     // For recieving comands over serial line
     if(Serial.available()) {
