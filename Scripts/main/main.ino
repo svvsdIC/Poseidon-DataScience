@@ -12,50 +12,57 @@ File Description:
 
 /*
 
+Perpetual goals:
+> Find out/develop concrete use-cases for sensor package
+    > Use cases for end-user
+
+
 Development Roadmap:
 
-    Immediate Goals:
+> (done) Better error handling in and out of methods 
+> (done) Hours/Minutes/Seconds timestamp display
+> (done) Investigate sensor control-board internal memory
+    > (done) Read and write files reliably on μSD card
+> (done) .csv file generation
+    > (done) Generate CSV file content 
+    > (done) Create and modify CSV files ion microSD card
+    > (done) Add logging of recorded data to main.ino 
 
-    > (done) Better error handling in and out of methods 
-    > (done) Hours/Minutes/Seconds timestamp display
-    > (done) Investigate sensor control-board internal memory
-        > (done) Read and write files reliably on μSD card
-    > .csv file generation
-        > (done) Generate CSV file content 
-        > (done) Create and modify CSV files ion microSD card
-        > Add logging of recorded data to main.ino 
-    > Add More Methods for sensors
-        > Sleep
-            >  Place at
-        > Return current status
+
+> Create Serial Interface
+    > (done) Create infrastructure
+    > Design all serial commands
+        > Set Time
+        > Write to csv
+        > User-selected measurment delivery modes
+            > Single read
+            > Periodic reads
+            > etc.
         > etc.
 
-    
-    > Build prototype ring buffer
+    > Implement serial commands
+        > Add More Methods for sensors
+            > Sleep
+            > Return current status
+            > etc.
 
+> Write documentation for existing structures
 
-    Mid-term Goals:
+> Write serial command docs
 
-    > User-selected measurment delivery modes
-        > 1 read
-        > Periodic reads
-        > Depth-activated reads
-        > etc.
+> Misc
     > Internal Battery management
         > Measure voltage
-    > Build prototype UI (terminal-style commands over serial)
 
+> Light Sensors
+    > Figure out surface-relative reading configuration
+    > Design and implement sensors' structures and methods
 
-    Long-Term Goals:
+> Turbidity sensor 
+    > Design and build turbidity sensor
+        > Allocate reading GPIO pins on Feather
+    > Design and implement sensor's structures and methods
 
-    > Find out/develop concrete use-cases for sensor package
-        > Use cases for to end-user
-    > Decide on delivery to user
-        > SD card/Internal Storage
-        > Serial
-        > Data Radio
-        > Bluetooth connection
-        > etc.
 
 
 Links:
