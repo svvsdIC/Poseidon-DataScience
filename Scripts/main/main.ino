@@ -77,6 +77,9 @@ Links:
 
     https://docs.google.com/document/d/12zM-jy_i1q-XmQzXvvwT4mxrKElRtTjQt7xu8XVNhUw
 
+    Documentation and Resources:
+
+    https://drive.google.com/drive/folders/1I4Cdi6U9HW2RpAAhkCUK7W7IaoSDOxND?usp=drive_link
 
 */
 
@@ -98,6 +101,7 @@ int currentByte = 0;
 // Defines the static variables used to keep track of sensor objects
 int Sensor_Base::m_numberOfSensors = 0;
 
+// Array of pointers to each sensor
 Sensor_Base* Sensor_Base::m_ListOfSensorObjects[MAX_NUMBER_OF_SENSORS] = {};
 
 Event_Logger obj_EventLogger = Event_Logger("EVENTLOG.txt", false);
