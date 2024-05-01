@@ -221,7 +221,7 @@ Sensor_OR::Sensor_OR() : Sensor_Base((int)98, (unsigned long)815) {
 // ===== Methods for DO Subclass ====================================================================================================================================================
 
 
-// Constructor for the Atlas dissolved oxygen (DO) sensor; 
+// Constructor for the Atlas dissolved oxygen (DO) sensor;
 // DO has I2C address 97, and requires a delay of 575 ms
 Sensor_DO::Sensor_DO() : Sensor_Base((int)97, (unsigned long)575) {
 
