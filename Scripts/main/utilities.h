@@ -18,7 +18,7 @@ File Description:
 // the header string "Electrical Conductivity,Total Dissolved Solids,Salinity,Specific Gravity,Oxygen Reduction,Dissolved Oxygen Density,Dissolved Oxygen Percent,Potential Hydrogen,Temperature\n"
 // has 171 characters.  Update MAX_CSV_ROW_LENGTH with more parameters.
 
-// The maximum characters in the name of a file
+// The maximum characters in the name of a file (8 character name, dot, 3 character extension, null terminator)
 #define MAX_FILE_NAME_LENGTH (8 + 1 + 3 + 1)
 
 //Takes an input in seconds and formats it into the form "hh:mm:ss"

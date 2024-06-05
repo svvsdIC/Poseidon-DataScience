@@ -10,10 +10,10 @@
 
 
 // TODO: add description
-class SerialCommand {
+class Serial_Command {
 
     public:
-        SerialCommand();
+        Serial_Command();
         int parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]);
     protected:
         char m_parameters[MAX_COMMAND_PARAMETERS][MAX_PARAMETER_LENGTH + 1];

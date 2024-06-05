@@ -3,11 +3,11 @@
 #include "sensor.h"
 
 
-SerialCommand::SerialCommand() {}
+Serial_Command::Serial_Command() {}
 
 
 
-int SerialCommand::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
+int Serial_Command::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
     char commandCaps[MAX_SERIAL_COMMAND_LENGTH + 1];
 
     for(int i = 0; commandCaps[i] != '\0'; i++) {
@@ -83,7 +83,7 @@ int SerialCommand::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
 
 // **************************** Commands below this point *************************
 
-int SerialCommand::checkStatus() {
+int Serial_Command::checkStatus() {
 
 
     return 0;
