@@ -15,16 +15,20 @@ File Description:
 // Defines a type for each data point returned by a sensor.
 enum ReadingType
 {
-    
+    // Atlas Oxygen Reduction Sensor
     OR, 
-
+    
+    // Atlas pH Sensor
     PH,
-
+    
+    // Atlas Dissolved Oxygen Sensor
     DOD,
     DOP, 
     
+    // Atlas Thermometer
     TEMP,
 
+    // Atlas Electrical Conductivity Sensor
     EC,
     TDS, 
     SL,
