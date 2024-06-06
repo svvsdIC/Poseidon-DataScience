@@ -12,11 +12,11 @@ File Description:
 // Maximum length of a formatted time string (hh:mm:ss)
 #define MAX_TIME_CHARS (8)
 
+// the header string "Electrical Conductivity,Total Dissolved Solids,Salinity,Specific Gravity,Oxygen Reduction,Dissolved Oxygen Density,Dissolved Oxygen Percent,Potential Hydrogen,Temperature\n"
+// has 171 characters.  Update MAX_FILE_ROW_LENGTH with more parameters.
+
 // The maximum characters in one row of a file stored on the μsd card
 #define MAX_FILE_ROW_LENGTH (255)
-
-// the header string "Electrical Conductivity,Total Dissolved Solids,Salinity,Specific Gravity,Oxygen Reduction,Dissolved Oxygen Density,Dissolved Oxygen Percent,Potential Hydrogen,Temperature\n"
-// has 171 characters.  Update MAX_CSV_ROW_LENGTH with more parameters.
 
 // The maximum characters in the name of a file (8 character name, dot, 3 character extension, null terminator)
 #define MAX_FILE_NAME_LENGTH (8 + 1 + 3 + 1)

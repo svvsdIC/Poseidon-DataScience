@@ -92,44 +92,43 @@ Links:
 #include "eventlogger.h"
 #include "serialcommand.h"
 
-// For recieving commands over serial line
-
+// The string recieved over the serial line
 char serialCommand[MAX_SERIAL_COMMAND_LENGTH + 1];
+
+// True when there is a complete command recieved over the serial line, to be executed
 bool serialCommandReady = false;
-int currentByte = 0;
 
 // Defines the static variables used to keep track of sensor objects
 int Sensor_Base::m_numberOfSensors = 0;
 
 // Array of pointers to each sensor
+// Array is populated when a Sensor_Base constructor runs
 Sensor_Base* Sensor_Base::m_ListOfSensorObjects[MAX_NUMBER_OF_SENSORS] = {};
 
+// Event logger object
 Event_Logger obj_EventLogger = Event_Logger("EVENTLOG.txt", false);
 
-// Create an instance of each sensor
 
+
+// Create an instance of each sensor
 Sensor_EC obj_EC = Sensor_EC();
 Sensor_DO obj_DO = Sensor_DO();
 Sensor_TEMP obj_TEMP = Sensor_TEMP();
 Sensor_PH obj_PH = Sensor_PH();
 Sensor_OR obj_OR = Sensor_OR();
 
-//Sensor_Base allSensorInstances[] = {obj_OR, obj_EC, obj_DO, obj_PH, obj_TEMP };
-
-
-
+// Which pin serves as the SD card select
 const int cardSelect = 4;
 
+// Wehther the sensor package program has an active serial connection
 bool initialized_with_serial = false;
 
-// the name of the file on the μsd card where the data are recorded
+// The name of the file on the μsd card where the data are recorded
 char dataFileName[MAX_FILE_NAME_LENGTH];
 
 
 
 void setup() {
-
-
 
     // Initialize μSD card
     while (!SD.begin(cardSelect)) {
@@ -145,7 +144,7 @@ void setup() {
     //Log startup event
     obj_EventLogger.LogEvent("\n******************************\nProgram Start");
 
-    // initialize serial connection or skip after 20 seconds
+    // initialize serial connection, or skip after 20 seconds
     while(millis() < 20000) {
         if(Serial) {
             initialized_with_serial = true;
@@ -183,7 +182,7 @@ void loop() {
     // For recieving comands over serial line
     if(Serial.available()) {
 
-        currentByte = 0;
+        int currentByte = 0;
 
         while( (Serial.available())) {
             serialCommand[currentByte] = Serial.read();

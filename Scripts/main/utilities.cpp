@@ -31,7 +31,7 @@ void formatTime(unsigned long seconds, char (&outputLocation)[MAX_TIME_CHARS + 1
 
 }
 
-// takes a string of and the name of a file and adds that data plus a line break
+// takes a string of and the name of a file, and adds that data plus a line break
 // to the named  file.  Returns 0 for success and 99 for faliure
 int writeLineToFile(char text_line[MAX_FILE_ROW_LENGTH + 1], char fileName[MAX_FILE_NAME_LENGTH]) {
 
