@@ -19,6 +19,10 @@ File Description:
 // Constructor for the Sensor_Base class
 Sensor_Base::Sensor_Base(int address, unsigned long readDelayMS) {
 
+    m_ListOfSensorObjects[m_numberOfSensors] = this;
+
+    m_numberOfSensors++;
+
     m_address = address;
     m_readDelayMS = readDelayMS;
 
@@ -32,7 +36,6 @@ Sensor_Base::Sensor_Base(int address, unsigned long readDelayMS) {
         
 }
 
-
 // Reads the specified sensor, returns the status code,
 // and fills in referenced SensorValue array
 int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]) {
@@ -40,12 +43,15 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     char cmd[] = "r"; 
     int responseCode = this->sendI2CMessage(cmd);
 
+    if(responseCode != SUCCESS) {
+        return responseCode;
+    }
+
     double separatedSensorValues[MAX_READINGS_PER_SENSOR + 1];
 
     for(double x : separatedSensorValues) {
         x = (double) 0.00;
     }
-
 
     char sensorData[MAX_SENSOR_DATA + 1] = "";
      
@@ -58,7 +64,9 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
         if(recievedByte == ',') {
             // comma; end of individual value
             separatedSensorValues[j] = atof(sensorData);
-            sensorData[0] = 0x00;
+            for (int k = 0; k < MAX_SENSOR_DATA + 1; k++) {
+                sensorData[k] = '\0';
+            }
 
             // we want to start at character 0 next time we get here,
             // so i is set to -1 since i increments before we get here.
@@ -85,7 +93,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     SensorValue sensorReturnValues[MAX_READINGS_PER_SENSOR + 1]; 
 
     // Initialize sensorReturnValues as a termination indicator for loops
-    for(int j = 0; j <= MAX_READINGS_PER_SENSOR + 1; j++) {
+    for(int j = 0; j < MAX_READINGS_PER_SENSOR + 1; j++) {
 
         sensorReturnValues[j].type = INVALID_TYPE; 
         sensorReturnValues[j].value = (0);
@@ -94,7 +102,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     }
 
     // Fill in every relevant value of sensorReturnValues with the value returned by the sensor
-    for(int j = 0; this->m_readingTypes[j] != INVALID_TYPE && j < MAX_READINGS_PER_SENSOR; j++) {
+    for(int j = 0; (this->m_readingTypes[j] != INVALID_TYPE) && (j < MAX_READINGS_PER_SENSOR); j++) {
         
         sensorReturnValues[j].type = (ReadingType) (m_readingTypes[j]);
         sensorReturnValues[j].value = separatedSensorValues[j];
@@ -115,7 +123,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
 
 
 // Sends a character string command for a specific sensor over I2C, then returns the response code.
-int Sensor_Base::sendI2CMessage(char cmd[MAX_COMMAND_LENGTH + 1]) {
+int Sensor_Base::sendI2CMessage(char cmd[MAX_SENSOR_COMMAND_LENGTH + 1]) {
     Wire.beginTransmission(this->m_address);                         
     Wire.write( cmd );                                                    
     Wire.endTransmission(true);
@@ -160,7 +168,7 @@ Sensor_EC::Sensor_EC() : Sensor_Base((int)100, (unsigned long)800) {
 
  // enables all EC reading types to be returned from the sensor,
  // so we get the expected number of return vaues in the expected order.
-void Sensor_EC::enableAllParameters() {
+int Sensor_EC::enableAllParameters() {
 
     #define MAX_DATA_SENT_ON_O_COMMAND (9)
 
@@ -173,13 +181,17 @@ void Sensor_EC::enableAllParameters() {
         };
 
     for(int i = 0; i < (int)( sizeof(cmd) / sizeof(cmd[0]) ) - 1; i++) {
-        int responseCode = sendI2CMessage(cmd[i]);
-
-        Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
-        Wire.endTransmission(true);
         
-
+        
+        int responseCode = sendI2CMessage(cmd[i]);
+        
+        if(responseCode != SUCCESS) {
+            return responseCode;
+        }
+        
     }
+
+    return SUCCESS;
 
 }
 
@@ -209,7 +221,7 @@ Sensor_OR::Sensor_OR() : Sensor_Base((int)98, (unsigned long)815) {
 // ===== Methods for DO Subclass ====================================================================================================================================================
 
 
-// Constructor for the Atlas dissolved oxygen (DO) sensor; 
+// Constructor for the Atlas dissolved oxygen (DO) sensor;
 // DO has I2C address 97, and requires a delay of 575 ms
 Sensor_DO::Sensor_DO() : Sensor_Base((int)97, (unsigned long)575) {
 
@@ -230,7 +242,7 @@ Sensor_DO::Sensor_DO() : Sensor_Base((int)97, (unsigned long)575) {
 
 // enables all DO reading types to be returned from the sensor,
 // so we get the expected number of return vaues in the expected order.
-void Sensor_DO::enableAllParameters() {
+int Sensor_DO::enableAllParameters() {
 
     char cmd[][MAX_DATA_SENT_ON_O_COMMAND] = {
         {"O,mg,1"}, 
@@ -242,10 +254,13 @@ void Sensor_DO::enableAllParameters() {
 
         int responseCode = sendI2CMessage(cmd[i]);
 
-        Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
-        Wire.endTransmission(true);
+        if(responseCode != SUCCESS) {
+            return responseCode;
+        }
 
     }
+
+    return SUCCESS;
 
 }
 
@@ -279,7 +294,7 @@ Sensor_TEMP::Sensor_TEMP() : Sensor_Base((int)102, (unsigned long)815) {
 
     // populate m_readingTypes and associated m_displayNames
 
-    this->m_readingTypes[0] = PH;
+    this->m_readingTypes[0] = TEMP;
     strncpy(this->m_displayNames[0], "Temperature", MAX_READING_NAME_LENGTH);
 
     this->m_readingTypes[1] = INVALID_TYPE;

@@ -15,16 +15,20 @@ File Description:
 // Defines a type for each data point returned by a sensor.
 enum ReadingType
 {
-    
+    // Atlas Oxygen Reduction Sensor
     OR, 
-
+    
+    // Atlas pH Sensor
     PH,
-
+    
+    // Atlas Dissolved Oxygen Sensor
     DOD,
     DOP, 
     
+    // Atlas Thermometer
     TEMP,
 
+    // Atlas Electrical Conductivity Sensor
     EC,
     TDS, 
     SL,
@@ -33,6 +37,16 @@ enum ReadingType
     NUM_READING_TYPES,
 
     INVALID_TYPE = -1
+};
+
+// Response codes returned after an I2C command
+enum ResponseCodes 
+{
+    NO_RESPONSE = -1,
+    SUCCESS = 1,
+    SYNTAX = 2,
+    NOT_READY = 254,
+    NO_DATA = 255
 };
 
 
@@ -45,8 +59,14 @@ enum ReadingType
 // Max length of the text display name of a reading type
 #define MAX_READING_NAME_LENGTH (32)
 
-// Max lenght of a command sent to a sensor
-#define MAX_COMMAND_LENGTH (32)
+// Max lenghth of a command sent to a sensor
+#define MAX_SENSOR_COMMAND_LENGTH (32)
+
+// Maximum number of sensors controlled by the package
+#define MAX_NUMBER_OF_SENSORS (8)
+
+// The header to be printed at the top of the sensor data csv file
+static char SENSOR_CSV_HEADER[] = "Timestamp,Reading Type,Value";
 
 // Associates a datapoint with its type, and the time it was measured
 struct SensorValue {
@@ -62,25 +82,33 @@ class Sensor_Base {
         // I2C address of sensor
         int m_address;
 
-        // delay after command before reading data
+        // Self-populating array of pointers to all constructed sensor_base objects
+        static Sensor_Base * m_ListOfSensorObjects[MAX_NUMBER_OF_SENSORS];
+
+        // Self-updating number of constructed sensor_base objects
+        static int m_numberOfSensors;
+
+        // delay after command before data is available to read
         unsigned long m_readDelayMS;    
 
         // array of the names to display for each ReadingType this sensor returns
         char m_displayNames[MAX_READINGS_PER_SENSOR + 1][MAX_READING_NAME_LENGTH + 1];
-
         //Array of the ReadingTypes this sensor returns
         ReadingType m_readingTypes[MAX_READINGS_PER_SENSOR + 1]; 
-                
+
+        // Reads the specified sensor, returns the status code,
+        // and fills in referenced SensorValue array        
         int read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]);
 
         // Empty virtual void to make sensors with multiple ReadingTypes
         // return all of the corresponding SensorValues (overridden in subclasses)
-        virtual void enableAllParameters() {};
+        virtual int enableAllParameters() {return SUCCESS;};
 
+        // Constructor for the Sensor_Base class
         Sensor_Base(int address, unsigned long readDelayMS);
 
-    protected:
-        int sendI2CMessage(char cmd[MAX_COMMAND_LENGTH + 1]);
+        // Sends a character string command for a specific sensor over I2C, then returns the response code
+        int sendI2CMessage(char cmd[MAX_SENSOR_COMMAND_LENGTH + 1]);
 
     // TODO: add calibrate(), sleep(), status(), etc.
 
@@ -93,7 +121,7 @@ class Sensor_EC : public Sensor_Base {
     
     public:
         Sensor_EC();
-        void enableAllParameters();
+        int enableAllParameters();
 
 };
 
@@ -118,7 +146,7 @@ class Sensor_DO : public Sensor_Base {
     
     public:
         Sensor_DO();
-        void enableAllParameters();
+        int enableAllParameters();
 
 
 };
