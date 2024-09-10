@@ -1,6 +1,8 @@
 // this is an i2c bus client (aka slave)
 // it imitates a collection of ATLAS SENSORS
 //
+
+#include <Arduino.h>
 // It uses modified Wire.c twi.c modules to allow the reception of
 // multiple i2c address
 
