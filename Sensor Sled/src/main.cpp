@@ -92,6 +92,9 @@ Links:
 #include "eventlogger.h"
 #include "serialcommand.h"
 
+// PLACEHOLDER FUNCTION
+void read_all_sensors();
+
 // The string recieved over the serial line
 char serialCommand[MAX_SERIAL_COMMAND_LENGTH + 1];
 
