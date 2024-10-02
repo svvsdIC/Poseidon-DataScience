@@ -92,6 +92,8 @@ Links:
 #include "eventlogger.h"
 #include "serialcommand.h"
 
+// declare function
+void read_all_sensors();
 // The string recieved over the serial line
 char serialCommand[MAX_SERIAL_COMMAND_LENGTH + 1];
 
@@ -110,9 +112,14 @@ Event_Logger obj_EventLogger = Event_Logger("EVENTLOG.txt", false);
 
 
 
+
 // Create an instance of each sensor
 Sensor_EC obj_EC = Sensor_EC();
 Sensor_DO obj_DO = Sensor_DO();
+
+
+
+
 Sensor_TEMP obj_TEMP = Sensor_TEMP();
 Sensor_PH obj_PH = Sensor_PH();
 Sensor_OR obj_OR = Sensor_OR();
