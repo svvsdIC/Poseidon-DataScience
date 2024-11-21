@@ -48,39 +48,33 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#define __AVR_ATtiny84__
+
 #include <Arduino.h>
-#include "TinyWireS.h"     // I2C library for ATtiny85A (and other older ATtinys)
+
+#if defined(__AVR_ATtiny841__)
+#define F_CPU 16000000                          // clock speed: 16MHz (external crystal)
+#include "WireS.h"                              // I2C library for ATtiny841 (and other modern ATtinys)
+#else
+#define F_CPU 20000000                          // clock speed: 20MHz (external crystal)
+#include "TinyWireS.h"                          // I2C library for ATtiny84A (and other older ATtinys)
+#endif
 
 const byte SLAVE_ADDR = 100;
 
-constexpr byte NUM_BYTES = 4;
+const byte NUM_BYTES = 4;
 
 volatile byte data[NUM_BYTES] = { 0, 1, 2, 3 };
-
-void requestISR();
-
-const int LED_PIN = 0;
 
 void setup() {
     TinyWireS.begin(SLAVE_ADDR);
     TinyWireS.onRequest(requestISR);
-
-    pinMode(LED_PIN, OUTPUT);
-    for (int i = 0; i < 5; i++) {
-        digitalWrite(LED_PIN, HIGH);
-        delay(1000); 
-        digitalWrite(LED_PIN, LOW);
-        delay(1000);
-
-    }
 }
 
-void loop()
-{
-}
+void loop() {}
 
 void requestISR() {
-    for (byte i = 0; i < NUM_BYTES; i++) {
+    for (byte i=0; i<NUM_BYTES; i++) {
         TinyWireS.write(data[i]);
         data[i] += 1;
     }
