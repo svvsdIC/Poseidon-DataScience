@@ -51,7 +51,7 @@
 #include <Arduino.h>
 #include "TinyWireS.h"     // I2C library for ATtiny85A (and other older ATtinys)
 
-const byte SLAVE_ADDR = 100;
+const byte SLAVE_ADDR = 22;
 
 constexpr byte NUM_BYTES = 4;
 
@@ -66,22 +66,22 @@ void setup() {
     TinyWireS.onRequest(requestISR);
 
     pinMode(LED_PIN, OUTPUT);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 1; i++) {
         digitalWrite(LED_PIN, HIGH);
         delay(1000); 
         digitalWrite(LED_PIN, LOW);
         delay(1000);
-
     }
 }
 
 void loop()
 {
+    TinyWireS_stop_check();
 }
 
 void requestISR() {
-    for (byte i = 0; i < NUM_BYTES; i++) {
-        TinyWireS.write(data[i]);
+    for (byte i = 0; i < NUM_BYTES - 2; i++) {
+        TinyWireS.write((uint8_t)5);
         data[i] += 1;
     }
 }
