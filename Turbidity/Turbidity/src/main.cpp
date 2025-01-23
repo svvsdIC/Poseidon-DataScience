@@ -80,8 +80,8 @@ void loop()
 }
 
 void requestISR() {
-    for (byte i = 0; i < NUM_BYTES - 2; i++) {
-        TinyWireS.write((uint8_t)5);
-        data[i] += 1;
+    for (byte i = 0; i < NUM_BYTES; i++) {
+        TinyWireS.write(data[i]);
+        data[i] += 16;
     }
 }
