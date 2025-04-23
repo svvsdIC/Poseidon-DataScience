@@ -1,12 +1,3 @@
-/*
-  https://www.sparkfun.com/products/15168
-  To install support for ATtiny84 in Arduino IDE: https://github.com/SpenceKonde/ATTinyCore/blob/master/Installation.md
-  This core is installed from the Board Manager menu
-  If you have Dave Mellis' ATtiny installed you may need to remove it from \Users\xx\AppData\Local\Arduino15\Packages
-  To support 400kHz I2C communication reliably ATtiny84 needs to run at 8MHz. This requires user to
-  click on 'Burn Bootloader' before code is loaded.
-*/
-
 #include <Wire.h>
 #include <EEPROM.h>
 #include <avr/sleep.h> //Needed for sleep_mode
