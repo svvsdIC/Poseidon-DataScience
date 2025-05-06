@@ -21,14 +21,14 @@ void updateTurbidity()
     // Bring up ADC
     ADCSRA |= (1 << ADEN);
 
-    int X_Pot = analogRead(Photoresistor_Pin);
+    int photo = analogRead(Photoresistor_Pin);
 
     // Convert int value to a 16-bit integer by bitshitting it left by 6.
     // Example-
     // DEC:           630
     // BIN:           1001110110
     // Bitshift by 6: 1001110110000000
-    uint16_t X_unit16 = X_Pot << 6;
+    uint16_t photo16 = photo << 6;
 
     // Split the bitshifted word into the MSB and LSB parts
     // Continuing from the example above...
@@ -37,39 +37,40 @@ void updateTurbidity()
     // Bitshift by 6:  10011101   10000000
     // Split:          10011101 | 10000000
 
+    // Convert the 16-bit integer to a byte array
     byte *bytePointer;
+    bytePointer = (byte *) &photo16;
 
-    bytePointer = (byte *)&X_unit16;
-    registerMap.X_MSB = bytePointer[1];
-    registerMap.X_LSB = bytePointer[0];
+    registerMap.PhotoMSB = bytePointer[1];
+    registerMap.PhotoLSB = bytePointer[0];
 
     // Shut off ADC
     ADCSRA &= ~(1 << ADEN);
 }
 
 // If the current setting is different from that in EEPROM, update EEPROM
-void recordI2CAddress(void)
-{
-    // I2C address is byte
-    byte i2cAddr;
+// void recordI2CAddress(void)
+// {
+//     // I2C address is byte
+//     byte i2cAddr;
 
-    // Error check the current I2C address
-    if (registerMap.i2cAddress < 0x08 || registerMap.i2cAddress > 0x77)
-    {
-        // User has set the address out of range
-        // Go back to defaults
-        registerMap.i2cAddress = I2C_ADDRESS_DEFAULT;
-    }
+//     // Error check the current I2C address
+//     if (registerMap.i2cAddress < 0x08 || registerMap.i2cAddress > 0x77)
+//     {
+//         // User has set the address out of range
+//         // Go back to defaults
+//         registerMap.i2cAddress = I2C_ADDRESS_DEFAULT;
+//     }
 
-    // Read the value currently in EEPROM. If it's different from the memory map then record the memory map value to EEPROM.
-    EEPROM.get(LOCATION_I2C_ADDRESS, i2cAddr);
-    if (i2cAddr != registerMap.i2cAddress && registerMap.i2cLock == 0x13)
-    {
-        registerMap.i2cLock = 0x00;
-        EEPROM.write(LOCATION_I2C_ADDRESS, registerMap.i2cAddress);
-        startI2C(); // Determine the I2C address we should be using and begin listening on I2C bus
-    }
-}
+//     // Read the value currently in EEPROM. If it's different from the memory map then record the memory map value to EEPROM.
+//     EEPROM.get(LOCATION_I2C_ADDRESS, i2cAddr);
+//     if (i2cAddr != registerMap.i2cAddress && registerMap.i2cLock == 0x13)
+//     {
+//         registerMap.i2cLock = 0x00;
+//         EEPROM.write(LOCATION_I2C_ADDRESS, registerMap.i2cAddress);
+//         startI2C(); // Determine the I2C address we should be using and begin listening on I2C bus
+//     }
+// }
 
 // When Qwiic Joystick receives data bytes from Master, this function is called as an interrupt
 //(Serves rewritable I2C address)
@@ -87,11 +88,10 @@ void receiveEvent(int numberOfBytesReceived)
         {
             // Clense the incoming byte against the read only protected bits
             // Store the result into the register map
-            *(registerPointer + registerNumber + x) &= ~*(protectionPointer + registerNumber + x);       // Clear this register if needed
-            *(registerPointer + registerNumber + x) |= temp & *(protectionPointer + registerNumber + x); // Or in the user's request (clensed against protection bits)
+            *(registerPointer + registerNumber + x) = temp;
         }
     }
-    recordI2CAddress();
+    // recordI2CAddress();
 }
 
 // Respond to GET commands
