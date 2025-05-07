@@ -21,14 +21,14 @@ void updateTurbidity()
     // Bring up ADC
     ADCSRA |= (1 << ADEN);
 
-    int photo = analogRead(Photoresistor_Pin);
+    registerMap.Photo = analogRead(Photoresistor_Pin);
 
     // Convert int value to a 16-bit integer by bitshitting it left by 6.
     // Example-
     // DEC:           630
     // BIN:           1001110110
     // Bitshift by 6: 1001110110000000
-    uint16_t photo16 = photo << 6;
+    //uint16_t photo16 = photo << 6;
 
     // Split the bitshifted word into the MSB and LSB parts
     // Continuing from the example above...
@@ -38,11 +38,11 @@ void updateTurbidity()
     // Split:          10011101 | 10000000
 
     // Convert the 16-bit integer to a byte array
-    byte *bytePointer;
-    bytePointer = (byte *) &photo16;
+    // byte *bytePointer;
+    // bytePointer = (byte *)&photo16;
 
-    registerMap.PhotoMSB = bytePointer[1];
-    registerMap.PhotoLSB = bytePointer[0];
+    // registerMap.PhotoMSB = bytePointer[1];
+    // registerMap.PhotoLSB = bytePointer[0];
 
     // Shut off ADC
     ADCSRA &= ~(1 << ADEN);
@@ -105,5 +105,11 @@ void requestEvent()
     // This will write the entire contents of the register map struct starting from
     // the register the user requested, and when it reaches the end the master
     // will read 0xFFs.
-    Wire.write((registerPointer + registerNumber), sizeof(memoryMap) - registerNumber);
+    //Wire.write((registerPointer + registerNumber), sizeof(memoryMap) - registerNumber);
+    uint8_t msb = (registerMap.Photo >> 8) & 0xFF; // Most Significant Byte
+    uint8_t lsb = registerMap.Photo & 0xFF;        // Least Significant Byte
+
+    // Send the two bytes
+    Wire.write(msb);
+    Wire.write(lsb);
 }
