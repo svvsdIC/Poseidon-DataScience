@@ -3,6 +3,8 @@
 #include "constants.h"
 #include "interrupts.h"
 
+int responseCode = 3;
+
 // Begin listening on I2C bus as I2C slave using the global variable setting_i2c_address
 void startI2C()
 {
@@ -21,7 +23,9 @@ void updateTurbidity()
     // Bring up ADC
     ADCSRA |= (1 << ADEN);
 
-    registerMap.Photo = analogRead(Photoresistor_Pin);
+    uint16_t photo = analogRead(Photoresistor_Pin); // Read the ADC value from the photoresistor
+    registerMap.PhotoMSB = (photo >> 8) & 0xFF; // Get the MSB of the ADC value
+    registerMap.PhotoLSB = photo & 0xFF;        // Get the LSB of the ADC value
 
     // Convert int value to a 16-bit integer by bitshitting it left by 6.
     // Example-
@@ -76,21 +80,27 @@ void updateTurbidity()
 //(Serves rewritable I2C address)
 void receiveEvent(int numberOfBytesReceived)
 {
-    registerNumber = Wire.read(); // Get the memory map offset from the user
-
-    // Begin recording the following incoming bytes to the temp memory map
-    // starting at the registerNumber (the first byte received)
-    for (byte x = 0; x < numberOfBytesReceived - 1; x++)
+    //registerNumber = Wire.read(); // Get the memory map offset from the user
+    int command = Wire.read(); // Get the command from the user
+    if (command == 'R')
     {
-        byte temp = Wire.read(); // We might record it, we might throw it away
-
-        if ((x + registerNumber) < sizeof(memoryMap))
-        {
-            // Clense the incoming byte against the read only protected bits
-            // Store the result into the register map
-            *(registerPointer + registerNumber + x) = temp;
-        }
+        // Send sensor data when a command 'R' is received
+        //sendData();
     }
+    // registerNumber = command; // Set the register number to the command received
+    // // Begin recording the following incoming bytes to the temp memory map
+    // // starting at the registerNumber (the first byte received)
+    // for (byte x = 0; x < numberOfBytesReceived - 1; x++)
+    // {
+    //     byte temp = Wire.read(); // We might record it, we might throw it away
+
+    //     if ((x + registerNumber) < sizeof(memoryMap))
+    //     {
+    //         // Clense the incoming byte against the read only protected bits
+    //         // Store the result into the register map
+    //         *(registerPointer + registerNumber + x) = temp;
+    //     }
+    // }
     // recordI2CAddress();
 }
 
@@ -100,16 +110,28 @@ void receiveEvent(int numberOfBytesReceived)
 // While we are sending bytes we may have to do some calculations
 void requestEvent()
 {
+    sendData(responseCode); // Send the response code when a request is made
+    sendData();
+}
+
+void sendData()
+{
     updateTurbidity();
 
-    // This will write the entire contents of the register map struct starting from
-    // the register the user requested, and when it reaches the end the master
-    // will read 0xFFs.
-    //Wire.write((registerPointer + registerNumber), sizeof(memoryMap) - registerNumber);
-    uint8_t msb = (registerMap.Photo >> 8) & 0xFF; // Most Significant Byte
-    uint8_t lsb = registerMap.Photo & 0xFF;        // Least Significant Byte
+    // This will write the value at the register that is offset by the registerNumber
+    //Wire.write(*(registerPointer + registerNumber));// - registerNumber);
 
-    // Send the two bytes
-    Wire.write(msb);
-    Wire.write(lsb);
+    //uint8_t msb = (registerMap.Photo >> 8) & 0xFF; // Most Significant Byte
+    //uint8_t lsb = registerMap.Photo & 0xFF;        // Least Significant Byte
+
+    // Doing this instead of register variable values because this should be
+    // the only value being read from the sensor
+    Wire.write(String(registerMap.PhotoMSB).c_str());
+    Wire.write(String(registerMap.PhotoLSB).c_str());
+    sendData('\0'); // Send a null terminator to indicate the end of the data
+}
+
+void sendData(byte data)
+{
+    Wire.write(data); // Send the data to the master
 }

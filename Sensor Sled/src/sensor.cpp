@@ -40,7 +40,7 @@ Sensor_Base::Sensor_Base(int address, unsigned long readDelayMS) {
 // and fills in referenced SensorValue array
 int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]) {
 
-    char cmd[] = "R"; 
+    char cmd[] = "r";
     int responseCode = this->sendI2CMessage(cmd);
 
     if(responseCode != SUCCESS) {
@@ -132,11 +132,10 @@ int Sensor_Base::sendI2CMessage(char cmd[MAX_SENSOR_COMMAND_LENGTH + 1]) {
 
     Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
     int responseCode = Wire.read();
-    Wire.endTransmission(true);
 
-    Wire.beginTransmission(this->m_address);
-    Wire.write("Sleep");
-    Wire.endTransmission(true);
+    // Wire.beginTransmission(this->m_address);
+    // Wire.write("Sleep");
+    // Wire.endTransmission(true);
 
     return responseCode;
 }
