@@ -4,7 +4,6 @@
 #include "eventlogger.h"
 #include "utilities.h"
 
-
 // Constructor for the Event_Logger class.  Takes the name of the log file, and whether to send logs over the serial line.
 Event_Logger::Event_Logger(const char fileName[MAX_FILE_NAME_LENGTH], bool sendLogsOnSerial) {
     strncpy(this->m_fileName, fileName, MAX_FILE_NAME_LENGTH);
@@ -16,10 +15,10 @@ void Event_Logger::LogError(const char * errorText) {
     File eventLogFile;
     
     eventLogFile = SD.open(m_fileName, FILE_WRITE);
-	if( !eventLogFile ) {
-		Serial.print("Could not open "); 
-		Serial.println(m_fileName);
-	}
+	  if (!eventLogFile) {
+		  Serial.print("Could not open "); 
+		  Serial.println(m_fileName);
+	  }
 
     char timeStamp[MAX_TIME_CHARS + 1];
     formatTime((unsigned long) (( (float) millis() ) / 1000), timeStamp);
@@ -29,7 +28,7 @@ void Event_Logger::LogError(const char * errorText) {
 
     eventLogFile.println(errorLine);
 
-    if(m_sendLogsOnSerial) {
+    if (m_sendLogsOnSerial) {
         Serial.println(errorLine);
     }
 
@@ -41,10 +40,10 @@ void Event_Logger::LogEvent(const char * eventText) {
     File eventLogFile;
     
     eventLogFile = SD.open(m_fileName, FILE_WRITE);
-	if( !eventLogFile ) {
-		Serial.print("Could not open "); 
-		Serial.println(m_fileName);
-	}
+	  if(!eventLogFile) {
+		  Serial.print("Could not open "); 
+		  Serial.println(m_fileName);
+	  }
 
     char timeStamp[MAX_TIME_CHARS + 1];
     formatTime((unsigned long) (( (float) millis() ) / 1000), timeStamp);
@@ -55,7 +54,7 @@ void Event_Logger::LogEvent(const char * eventText) {
 
     eventLogFile.println(eventLine);
 
-    if(m_sendLogsOnSerial) {
+    if (m_sendLogsOnSerial) {
         Serial.println(eventLine);
     }
 

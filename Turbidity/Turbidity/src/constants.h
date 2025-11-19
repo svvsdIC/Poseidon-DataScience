@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Arduino.h>
+#ifndef byte
+using byte = unsigned char;
 
 // Enum for EEPROM locations
 enum eepromLocations
@@ -16,6 +18,7 @@ extern const uint8_t I2C_ADDRESS_DEFAULT;
 extern const byte Photoresistor_Pin;
 
 // Struct definition for the register map
+// Will need to add more register variables later, such as brightness
 struct memoryMap
 {
     // byte id; // Reg: 0x00 - Default I2C Address
@@ -28,8 +31,9 @@ struct memoryMap
 };
 
 // Extern declarations for the register map and pointers
-extern volatile memoryMap registerMap;
+extern volatile memoryMap registerMap; // Specific use of the generic struct
 
-extern uint8_t *registerPointer;
+extern uint8_t *registerPointer; // Memory manip stuff
 
+// I don't think we use this anymore
 extern volatile byte registerNumber; // Gets set when user writes an address.

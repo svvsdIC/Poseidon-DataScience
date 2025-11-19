@@ -7,7 +7,6 @@
 // Class which defines the creation and useage of an error and event log stored on an μSD card
 class Event_Logger {
     public:
-        
         // String containing the name of the log file
         char m_fileName[MAX_FILE_NAME_LENGTH];
         
@@ -23,9 +22,5 @@ class Event_Logger {
         // Method to add an event to the event log.  Takes a pointer to the event text.
         void LogEvent(const char * eventText);
 };
-
-
-
-
 
 #endif //#ifndef __EVENTLOGGER_H__

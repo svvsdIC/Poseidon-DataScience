@@ -1,10 +1,8 @@
 /*
-
     File Description:
 
         Contains miscellaneous functions needed in main.ino that do not pertain
         directly to Atlas sensors.
-
 */
 
 #include <Arduino.h>
@@ -16,7 +14,6 @@
 // Takes an input in seconds and formats it into the form "hh:mm:ss"
 // with 24 hour time, then returns it to outputLocation
 void formatTime(unsigned long seconds, char (&outputLocation)[MAX_TIME_CHARS + 1]) {
-
     unsigned long remainingSeconds;
 
     unsigned int hours = (unsigned int) ( seconds / 3600 );
@@ -28,29 +25,27 @@ void formatTime(unsigned long seconds, char (&outputLocation)[MAX_TIME_CHARS + 1
     remainingSeconds = (seconds % 60);
 
     sprintf(outputLocation, "%02u:%02u:%02lu", hours, minutes, remainingSeconds);
-
 }
 
 // takes a string of and the name of a file, and adds that data plus a line break
 // to the named  file.  Returns 0 for success and 99 for faliure
 int writeLineToFile(char text_line[MAX_FILE_ROW_LENGTH + 1], char fileName[MAX_FILE_NAME_LENGTH]) {
-
     File dataFile;
     
     dataFile = SD.open(fileName, FILE_WRITE);
-	if( !dataFile ) {
-		Serial.print("Could not open "); 
-		Serial.println(fileName);
-		return 99;
-	}
+	  if (!dataFile) {
+		  Serial.print("Could not open "); 
+		  Serial.println(fileName);
+		  return 99;
+	  }
 
     dataFile.println(text_line);
 
     dataFile.close();
 
     return 0;
-
 }
+
 // Takes a csv-formatted string.  Creates a unique logfile on the μsd card and writes
 // csv_header to the top of the file.  Returns 99 if writing to existing file (if
 // sensorlog99.csv already exists) or 0 if writing to a new file.  Sends file name to fileNameLocation
@@ -75,4 +70,12 @@ int createDataFile(char csv_header[MAX_FILE_ROW_LENGTH+ 1], char (&fileNameLocat
     } else {
         return 0;
     }
+}
+
+void Reboot() {
+    // This is a software reset. It's not a true hardware reset, but it will restart the sketch.
+    // A true hardware reset can be achieved by connecting a digital pin to the reset pin.
+    // For now, we will just call a function at address 0, which will cause a reset.
+    void (*resetFunc)(void) = 0;
+    resetFunc();
 }

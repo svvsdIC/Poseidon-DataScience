@@ -3,6 +3,7 @@
 // Define constants in the .cpp file
 const uint8_t I2C_ADDRESS_DEFAULT = 0x20;
 const byte Photoresistor_Pin = 2; // Will be 3 in the final version
+const byte Light_Pin = 3;         // Will be 4 in the final version
 
 /*
 Final pinmap:
