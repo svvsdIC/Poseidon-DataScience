@@ -2,15 +2,12 @@
 #include "serialcommand.h"
 #include "sensor.h"
 
-
 Serial_Command::Serial_Command() {}
-
-
 
 int Serial_Command::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
     char commandCaps[MAX_SERIAL_COMMAND_LENGTH + 1];
 
-    for(int i = 0; commandCaps[i] != '\0'; i++) {
+    for (int i = 0; commandCaps[i] != '\0'; i++) {
         commandCaps[i] = (char) toupper(command[i]);
     }
 
@@ -27,14 +24,14 @@ int Serial_Command::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
 
         char recievedByte = commandCaps[i];
 
-        if(recievedByte != ',') { 
+        if (recievedByte != ',') { 
         
             // add byte to data string
             parameter[i] = recievedByte;
         
         } else { // is a comma
             
-            if(p >= MAX_COMMAND_PARAMETERS) {
+            if (p >= MAX_COMMAND_PARAMETERS) {
                 // too may commas
                 // TODO: add error response based on return
                 return 999;
@@ -51,10 +48,9 @@ int Serial_Command::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
             i = -1;
             p++;
 
-        } 
+        }
 
-
-        if(recievedByte == '\0') {
+        if (recievedByte == '\0') {
             // end of string
             strncpy(m_parameters[p - 1], parameter, MAX_PARAMETER_LENGTH);
             strcpy(parameter, "");
@@ -62,8 +58,7 @@ int Serial_Command::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
         }
     }
 
-
-    if(m_parameters[0] == "STATUS") {
+    if (m_parameters[0] == "STATUS") {
         Serial.println(commandName);
         Serial.println(m_parameters[0]);
     // execute corresponding method
@@ -75,17 +70,12 @@ int Serial_Command::parseAndRun(char command[MAX_SERIAL_COMMAND_LENGTH + 1]) {
         return 998;
     }
 
-
     return 1;
-    
 }
 
 
 // **************************** Commands below this point *************************
 
 int Serial_Command::checkStatus() {
-
-
     return 0;
-
 }

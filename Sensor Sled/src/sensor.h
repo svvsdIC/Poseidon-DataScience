@@ -1,16 +1,15 @@
 /*
-
 File Description:
 
     Defines classes and structures used to read and record data from Atlas sensors.
 
     Header file of sensor.cpp
-
 */
 
 #ifndef __SENSOR_H
 #define __SENSOR_H
 
+int time = 0; // Actual time in seconds
 
 // Defines a type for each data point returned by a sensor.
 enum ReadingType
@@ -27,6 +26,9 @@ enum ReadingType
     
     // Atlas Thermometer
     TEMP,
+
+    // Atlas Turbidity Sensor
+    TB,
 
     // Atlas Electrical Conductivity Sensor
     EC,
@@ -48,7 +50,6 @@ enum ResponseCodes
     NOT_READY = 254,
     NO_DATA = 255
 };
-
 
 // most bytes that can be returned by a sensor
 #define MAX_SENSOR_DATA (32) 
@@ -74,7 +75,6 @@ struct SensorValue {
     unsigned long timeStamp;
     double value;
 };
-
 
 // Base class for an Atlas sensor
 class Sensor_Base {
@@ -111,54 +111,44 @@ class Sensor_Base {
         int sendI2CMessage(char cmd[MAX_SENSOR_COMMAND_LENGTH + 1]);
 
     // TODO: add calibrate(), sleep(), status(), etc.
-
 };
-
-
 
 // electrical conductivity (E) sensor subclass
 class Sensor_EC : public Sensor_Base {
-    
     public:
         Sensor_EC();
         int enableAllParameters();
-
 };
 
 // oxygen (OR) reduction sensor subclass
 class Sensor_OR : public Sensor_Base {
-    
     public:
         Sensor_OR();
-
 };
 
 // potential hydrogen (PH) sensor subclass
 class Sensor_PH : public Sensor_Base {
-    
     public:
         Sensor_PH();
-
 };
 
 // dissolved oxygen (DO) sensor subclass
 class Sensor_DO : public Sensor_Base {
-    
     public:
         Sensor_DO();
         int enableAllParameters();
-
-
 };
 
 // temperature (TEMP) sensor subclass
 class Sensor_TEMP : public Sensor_Base {
-    
     public:
         Sensor_TEMP();
-
 };
 
-
+// turbidity (TB) sensor subclass
+class Sensor_TB : public Sensor_Base {
+    public:
+        Sensor_TB();
+};
 
 #endif // #ifndef __SENSOR_H

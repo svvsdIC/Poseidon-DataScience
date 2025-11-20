@@ -1,9 +1,6 @@
 /*
-
 File Description:
-
     Header file for utilites.cpp
-
 */
 
 #ifndef __UTILITIES_H
@@ -33,5 +30,8 @@ int createDataFile(char csv_header[MAX_FILE_ROW_LENGTH+ 1], char (&fileNameLocat
 // takes a string of csv data and the name of a file and adds that data plus a line break
 // to the named  file.  Returns 0 for success and 99 for faliure
 int writeLineToFile(char data_line[MAX_FILE_ROW_LENGTH + 1], char fileName[MAX_FILE_NAME_LENGTH]);
+
+// Reboots the microcontroller
+void Reboot();
 
 #endif
