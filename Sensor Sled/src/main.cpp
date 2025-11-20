@@ -29,12 +29,11 @@ Development Roadmap:
 > Create Serial Interface
     > (done) Create infrastructure
     > Design all serial commands
-        > Set Time
-        > Write to csv
-        > User-selected measurment delivery modes
-            > Single read
-            > Periodic reads
-            > etc.
+        > (done) Set Time
+        > (done) Write to csv
+        > (done) User-selected measurment delivery modes
+            > (done) Single read
+            > (done) Periodic reads
         > etc.
 
     > Implement serial commands
@@ -102,6 +101,9 @@ char serialCommand[MAX_SERIAL_COMMAND_LENGTH + 1];
 // True when there is a complete command recieved over the serial line, to be executed
 bool serialCommandReady = false;
 
+// Period between sensor reads, in seconds
+int period = 0;
+
 // Defines the static variables used to keep track of sensor objects
 int Sensor_Base::m_numberOfSensors = 0;
 
@@ -119,6 +121,8 @@ Sensor_TEMP obj_TEMP = Sensor_TEMP();
 Sensor_PH obj_PH = Sensor_PH();
 Sensor_OR obj_OR = Sensor_OR();
 Sensor_TB obj_OR = Sensor_TB();
+
+SensorValue returnedValues[MAX_NUMBER_OF_SENSORS][MAX_READINGS_PER_SENSOR + 1];
 
 LightBar lightbar(LED_PIN, LASER_PIN);
 
@@ -190,14 +194,50 @@ void loop() {
             }
         }
 
-        if (serialCommand[currentByte - 1] == '\r') {
+        if (serialCommand[currentByte - 1] == '\r' || serialCommand[currentByte - 1] == '\n') {
             serialCommand[currentByte - 1] = '\0';
 
             currentByte = 0;
         
-            // TODO: add command parser here
+            // TODO: add sleep command
             if (strcmp(serialCommand, "RESET") == 0) {
                 Reboot();
+            }
+            // Set current board time to HH:MM:SS from serial command (f"SET_TIME {time_value}\n")
+            if (strncmp(serialCommand, "SET_TIME ", 9) == 0) {
+                unsigned long totalSeconds = 0;
+                int hours = 0;
+                int minutes = 0;
+                int seconds = 0;
+
+                sscanf(&serialCommand[9], "%d:%d:%d", &hours, &minutes, &seconds);
+
+                totalSeconds = (unsigned long)(hours * 3600 + minutes * 60 + seconds);
+
+                // set the board time
+                time = (int) totalSeconds;
+                Serial.print("Time set to ");
+                Serial.println(serialCommand + 9);
+            }
+            if (strcmp(serialCommand, "WRITE_CSV") == 0) {
+                write_to_csv();
+                Serial.println("Wrote to CSV");
+            }
+            if (strcmp(serialCommand, "SET_READ_PERIOD ", 16) == 0) {
+                int periodSeconds = 0;
+                sscanf(&serialCommand[16], "%d", &periodSeconds);
+
+                Serial.print("Set read period to ");
+                Serial.print(periodSeconds);
+                Serial.println(" seconds");
+
+                if (periodSeconds == 0)
+                {
+                  read_all_sensors();
+                  write_to_csv();
+                }
+
+                period = periodSeconds;
             }
 
             // test echo
@@ -210,37 +250,39 @@ void loop() {
    if (!initialized_with_serial) {
         //default behavior without serial command
         read_all_sensors();
-
-        lightbar.toggleLaser();
-        lightbar.setMode(LIGHTBAR_MODE::M);
-
-        delay(4000);
-   } else {
-        // TODO: replace with response to active serial command
-        read_all_sensors();
+        write_to_csv();
 
         lightbar.toggleLaser();
         lightbar.setMode(LIGHTBAR_MODE::M);
 
         delay(4000);
    }
+   else if (period > 0)
+   {
+      read_all_sensors();
+      write_to_csv();
+
+      delay(period * 1000);
+   }
 }
 
+// Fills returnedValues with sensor readings
 void read_all_sensors() {
     for (Sensor_Base *obj : Sensor_Base::m_ListOfSensorObjects) {
         if (!obj) {
             break;
         }
+        
+        // TODO: Might return sizeof(sensor) instead of index
+        SensorValue (&sensorValues)[MAX_READINGS_PER_SENSOR + 1] = returnedValues[&obj - Sensor_Base::m_ListOfSensorObjects];
 
-        SensorValue returnedValues[MAX_READINGS_PER_SENSOR + 1];
-
-        for (int i = 0; i < (int) (sizeof(returnedValues) / sizeof(returnedValues[0])); i++) {
-            returnedValues[i].timeStamp = 0;
-            returnedValues[i].value = 0;
-            returnedValues[i].type = INVALID_TYPE;
+        for (int i = 0; i < (int) (sizeof(sensorValues) / sizeof(sensorValues[0])); i++) {
+            sensorValues[i].timeStamp = 0;
+            sensorValues[i].value = 0;
+            sensorValues[i].type = INVALID_TYPE;
         }
         
-        int responseCode = obj->read(returnedValues);
+        int responseCode = obj->read(sensorValues);
 
         if (responseCode != SUCCESS) {
             char errorLine[MAX_FILE_ROW_LENGTH + 1];
@@ -254,11 +296,26 @@ void read_all_sensors() {
             obj_EventLogger.LogError(errorLine);
 
             continue;
-        }        
+        }
 
-        for (int i = 0; (returnedValues[i].type != INVALID_TYPE); i++) {  
+        Serial.print("\n");
+
+        delay(1000);
+    }
+}
+
+// Writes current returnedValues to csv file
+void write_to_csv() {
+    for (Sensor_Base *obj : Sensor_Base::m_ListOfSensorObjects) {
+        if (!obj) {
+            break;
+        }
+
+        SensorValue (&sensorValues)[MAX_READINGS_PER_SENSOR + 1] = returnedValues[&obj - Sensor_Base::m_ListOfSensorObjects];
+
+        for (int i = 0; (sensorValues[i].type != INVALID_TYPE); i++) {  
             char timeStampString[MAX_TIME_CHARS + 1];
-            formatTime(returnedValues->timeStamp, timeStampString);
+            formatTime(sensorValues->timeStamp, timeStampString);
         
             if (obj_EventLogger.m_sendLogsOnSerial) {
                 Serial.print("At time: ");
@@ -266,7 +323,7 @@ void read_all_sensors() {
                 Serial.print(", ");
                 Serial.print(obj->m_displayNames[i]);
                 Serial.print(" measured: ");
-                Serial.println(returnedValues[i].value);
+                Serial.println(sensorValues[i].value);
             }
 
             // csv rows are "Timestamp,Reading Type,Value"
@@ -279,16 +336,12 @@ void read_all_sensors() {
             char valueString[MAX_FILE_ROW_LENGTH + 1];
 
             // add the timestamp to the type and value of each reading in csv format
-            sprintf(csv_values, ",%s,%s", (obj->m_displayNames[i]), String(returnedValues[i].value, 5).c_str());
+            sprintf(csv_values, ",%s,%s", (obj->m_displayNames[i]), String(sensorValues[i].value, 5).c_str());
 
             strncat(single_csv_line, csv_values, MAX_FILE_ROW_LENGTH);
 
             // record data on SD card
             writeLineToFile(single_csv_line, dataFileName);
         }
-
-        Serial.print("\n");
-
-        delay(1000);
     }
 }

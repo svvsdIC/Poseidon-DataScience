@@ -97,7 +97,7 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
     for (int j = 0; (this->m_readingTypes[j] != INVALID_TYPE) && (j < MAX_READINGS_PER_SENSOR); j++) { 
         sensorReturnValues[j].type = (ReadingType) (m_readingTypes[j]);
         sensorReturnValues[j].value = separatedSensorValues[j];
-        sensorReturnValues[j].timeStamp = (unsigned long) (( (float) millis() ) / 1000);
+        sensorReturnValues[j].timeStamp = (unsigned long) (time);
     }
 
     // Pack data into structures and return them

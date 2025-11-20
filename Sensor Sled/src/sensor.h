@@ -9,6 +9,8 @@ File Description:
 #ifndef __SENSOR_H
 #define __SENSOR_H
 
+int time = 0; // Actual time in seconds
+
 // Defines a type for each data point returned by a sensor.
 enum ReadingType
 {
