@@ -269,7 +269,7 @@ Sensor_TEMP::Sensor_TEMP() : Sensor_Base((int)102, (unsigned long)815) {
     this->m_readingTypes[4] = INVALID_TYPE;
 }
 
-Sensor_TB::Sensor_TB() : Sensor_Base((int)101, (unsigned long)300) {
+Sensor_TB::Sensor_TB() : Sensor_Base((int)101, (unsigned long)1000) {
     // populate m_readingTypes and associated m_displayNames
     this->m_readingTypes[0] = TB;
     strncpy(this->m_displayNames[0], "Turbidity", MAX_READING_NAME_LENGTH);

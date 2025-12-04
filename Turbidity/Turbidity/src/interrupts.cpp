@@ -23,23 +23,25 @@ void startI2C()
 // Gets the photoresistor values in the MSB and LSB variables
 void updateTurbidity()
 {
+    // TODO: Variable average sample delay over I2C
+    // TODO: Variable amount of samples to average over I2C
     // Bring up ADC
     // Analog to digital converter.
     ADCSRA |= (1 << ADEN);
 
-    analogWrite(Light_Pin, 255); // Turn on light to maximum brightness
-    Delay(10);                   // Wait for light to stabilize
+    digitalWrite(Light_Pin, HIGH); // Turn on light to maximum brightness
+    delay(10);                   // Wait for light to stabilize
 
     int photoTotal = 0;
     for (int i = 0; i < 8; i++)
     {
         photoTotal += analogRead(Photoresistor_Pin); // Read the ADC value from the photoresistor
-        Delay(20); // Wait 20 ms in between readings
+        delay(100); // Wait 20 ms in between readings
     }
 
-    analogWrite(Light_Pin, 0); // Turn off light
+    digitalWrite(Light_Pin, LOW); // Turn off light
 
-    uint16_t photo = photoAverage >>= 3; // Average the 8 readings
+    uint16_t photo = photoTotal >>= 3; // Average the 8 readings
     // Idk if we need to AND with 0xFF
     registerMap.PhotoMSB = (photo >> 8) & 0xFF; // Get the MSB of the ADC value
     registerMap.PhotoLSB = photo & 0xFF;        // Get the LSB of the ADC value
@@ -56,13 +58,14 @@ void receiveEvent(int numberOfBytesReceived)
 {
     //registerNumber = Wire.read(); // Get the memory map offset from the user
     int command = Wire.read(); // Get the command from the user
-    if (command == "r")
+    if (command == 'r')
     {
         // Update sensor data when a command 'R' is received
         updateTurbidity();
     }
 }
 
+void sendTurbidityData();
 // Respond to GET commands
 // The interrupt will respond with bytes starting from the last byte the user sent to us
 // While we are sending bytes we may have to do some calculations
@@ -81,8 +84,8 @@ void sendTurbidityData()
 
     // Doing this instead of register variable values because this should be
     // the only value being read from the sensor
-    sendData(String(registerMap.PhotoMSB).c_str());
-    sendData(String(registerMap.PhotoLSB).c_str());
+    sendData(registerMap.PhotoMSB);
+    sendData(registerMap.PhotoLSB);
     // Expected by the master
     sendData('\0'); // Send a null terminator to indicate the end of the data
 }

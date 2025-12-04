@@ -31,6 +31,8 @@ class SensorSledUI:
         # Read period, 0 seconds for one read
         self.read_period_label = ttk.Label(master, text="Read Period (in s, 0 for single read):")
         self.read_period_label.pack()
+        self.read_period_disclaimer = ttk.Label(master, text="(There is a minimum 10s period)")
+        self.read_period_disclaimer.pack()
         self.read_period_entry = ttk.Entry(master)
         self.read_period_entry.pack()
         self.read_period_button = ttk.Button(master, text="Set Read Period", command=self.set_read_period)

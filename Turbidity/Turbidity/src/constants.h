@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #ifndef byte
 using byte = unsigned char;
+#endif
 
 // Enum for EEPROM locations
 enum eepromLocations
@@ -16,6 +17,7 @@ enum eepromLocations
 // Extern declarations for constants and variables
 extern const uint8_t I2C_ADDRESS_DEFAULT;
 extern const byte Photoresistor_Pin;
+extern const byte Light_Pin;
 
 // Struct definition for the register map
 // Will need to add more register variables later, such as brightness

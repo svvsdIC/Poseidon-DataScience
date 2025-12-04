@@ -257,10 +257,13 @@ void loop() {
 
         delay(4000);
    }
-   else if (period > 0)
+   else if (period)
    {
       read_all_sensors();
       write_to_csv();
+
+      lightbar.toggleLaser();
+      lightbar.setMode(LIGHTBAR_MODE::M);
 
       delay(period * 1000);
    }
