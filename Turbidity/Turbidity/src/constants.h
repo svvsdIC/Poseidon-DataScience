@@ -5,15 +5,6 @@
 using byte = unsigned char;
 #endif
 
-// Enum for EEPROM locations
-enum eepromLocations
-{
-    LOCATION_I2C_ADDRESS = 0, // Device's address
-    // LOCATION_FIRMWARE_MAJOR,
-    // LOCATION_FIRMWARE_MINOR,
-    //  Add more EEPROM locations here if needed
-};
-
 // Extern declarations for constants and variables
 extern const uint8_t I2C_ADDRESS_DEFAULT;
 extern const byte Photoresistor_Pin;
@@ -23,13 +14,11 @@ extern const byte Light_Pin;
 // Will need to add more register variables later, such as brightness
 struct memoryMap
 {
-    // byte id; // Reg: 0x00 - Default I2C Address
-    //  byte firmwareMajor; // Reg: 0x01 - Firmware Number
-    //  byte firmwareMinor; // Reg: 0x02 - Firmware Number
     byte PhotoMSB; // Reg: 0x00 - Current Joystick Horizontal Position (MSB)
     byte PhotoLSB; // Reg: 0x01 - Current Joystick Horizontal Position (LSB)
-    // byte i2cLock;    // Reg: 0x03 - Must be changed to 0x13 before I2C address can be changed.
     byte i2cAddress; // Reg: 0x02 - Set I2C New Address (re-writable). Clears i2cLock.
+    byte msReadDelay; // Reg: 0x03 - Milliseconds between samples
+    byte numSamples;  // Reg: 0x04 - Number of samples to average
 };
 
 // Extern declarations for the register map and pointers

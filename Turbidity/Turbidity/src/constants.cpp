@@ -19,14 +19,11 @@ Final pinmap:
 
 // Define and initialize the structs
 volatile memoryMap registerMap = {
-    //.id = I2C_ADDRESS_DEFAULT, // Default I2C Address (0x20)
-    //.firmwareMajor = 0x02,     // Firmware version. Helpful for tech support.
-    //.firmwareMinor = 0x06,
-    //.Photo = 0, // Current photoresistor value (10-bit ADC value)
     .PhotoMSB = 0,
     .PhotoLSB = 0,
-    //.i2cLock = 0x00,
     .i2cAddress = I2C_ADDRESS_DEFAULT,
+    .msReadDelay = 100,
+    .numSamples = 8
 };
 
 // Define pointers to the structs
