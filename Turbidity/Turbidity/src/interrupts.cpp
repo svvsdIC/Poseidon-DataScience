@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include "constants.h"
 #include "interrupts.h"
+#include "eeprom_storage.h"
 #include <string.h>
 
 // The chip will need to send a response code. This will be a variable
@@ -137,6 +138,8 @@ void receiveEvent(int numberOfBytesReceived)
         // Convert to integers and save
         registerMap.numSamples = atoi(numSamplesStr);
         registerMap.msReadDelay = atoi(msBetweenStr);
+        // Persist these changes to EEPROM
+        saveRegisterMapToEEPROM();
     }
     if (strcmp(command, "getsamp") == 0)
     {

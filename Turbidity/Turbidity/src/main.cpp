@@ -6,12 +6,16 @@
 
 #include "constants.h"
 #include "interrupts.h"
+#include "eeprom_storage.h"
 
 void setup(void)
 {
     // Pin Definitions
     pinMode(Photoresistor_Pin, INPUT); // No pull-up. (External 10k) - What?
     pinMode(Light_Pin, OUTPUT);        // Light Pin
+
+    // Load persisted registerMap values from EEPROM (if present)
+    loadRegisterMapFromEEPROM();
 
     // Initialize the i2c protocol and necessary requirements.
     // This listens all the time, but also assigns the onRecieve and onRequest callbacks

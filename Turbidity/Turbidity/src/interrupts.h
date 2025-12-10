@@ -2,7 +2,7 @@
 
 void startI2C();
 void updateTurbidity();
-// void recordI2CAddress(void);
+
 void receiveEvent(int numberOfBytesReceived);
 void requestEvent();
 void sendData();
