@@ -120,7 +120,7 @@ Sensor_DO obj_DO = Sensor_DO();
 Sensor_TEMP obj_TEMP = Sensor_TEMP();
 Sensor_PH obj_PH = Sensor_PH();
 Sensor_OR obj_OR = Sensor_OR();
-Sensor_TB obj_OR = Sensor_TB();
+Sensor_TB obj_TB = Sensor_TB();
 
 SensorValue returnedValues[MAX_NUMBER_OF_SENSORS][MAX_READINGS_PER_SENSOR + 1];
 
@@ -223,7 +223,7 @@ void loop() {
                 write_to_csv();
                 Serial.println("Wrote to CSV");
             }
-            if (strcmp(serialCommand, "SET_READ_PERIOD ", 16) == 0) {
+            if (strncmp(serialCommand, "SET_READ_PERIOD ", 16) == 0) {
                 int periodSeconds = 0;
                 sscanf(&serialCommand[16], "%d", &periodSeconds);
 
@@ -238,6 +238,43 @@ void loop() {
                 }
 
                 period = periodSeconds;
+
+                Serial.print("Read period set to ");
+                Serial.println(period);
+            }
+            if (strncmp(serialCommand, "UPLOAD_TURBIDITY_CAL", 20) == 0) {
+                Serial.println("Turbidity calibration upload not yet implemented");
+            }
+            if (strcmp(serialCommand, "EXPORT_TURBIDITY_CAL") == 0)
+            {
+                TurbidityCalibrationData calibrationData = obj_TB.getCalibrationData();
+                Serial.println("Turbidity calibration data export not yet implemented");
+            }
+            if (strncmp(serialCommand, "SET_TURBIDITY_SETTINGS", 22) == 0) { // (numSamples, msBetween)
+                // Extract calibration data from command
+                char calibrationData[100];
+                int numSamples = 0;
+                int msBetween = 0;
+                strncpy(calibrationData, &serialCommand[14], 99);
+                calibrationData[99] = '\0';
+
+                // Parse calibration data
+                sscanf(calibrationData, "%d,%d", &numSamples, &msBetween);
+
+                Serial.print("Turbidity calibration data received: ");
+                Serial.println(calibrationData);
+
+                // Send calibration data over I2C to turbidity sensor
+                obj_TB.setSettings({numSamples, msBetween});
+
+                Serial.println("Turbidity sensor settings updated");
+            }
+            if (strcmp(serialCommand, "GET_TURBIDITY_SETTINGS") == 0) {
+                TurbiditySettings settings = obj_TB.getSettings();
+                Serial.print("Turbidity Sensor Settings - Num Samples: ");
+                Serial.print(settings.numSamples);
+                Serial.print(", ms Between Samples: ");
+                Serial.println(settings.msBetweenSamples);
             }
 
             // test echo

@@ -107,18 +107,21 @@ int Sensor_Base::read(SensorValue (&outputLocation)[MAX_READINGS_PER_SENSOR + 1]
         i++;
     }
 
+    char sleepCmd[] = "Sleep";
+    this->sendI2CMessage(sleepCmd);
+
     return SUCCESS;
 }
 
 // Sends a character string command for a specific sensor over I2C, then returns the response code.
 int Sensor_Base::sendI2CMessage(char cmd[MAX_SENSOR_COMMAND_LENGTH + 1]) {
-    Wire.beginTransmission(this->m_address);                         
-    Wire.write(cmd);                                                 
+    Wire.beginTransmission(this->m_address);
+    Wire.write(cmd);
     Wire.endTransmission(true);
 
     delay(this->m_readDelayMS);
 
-    Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);                                  
+    Wire.requestFrom(m_address, MAX_SENSOR_DATA, 1);
     int responseCode = Wire.read();
 
     // Wire.beginTransmission(this->m_address);
@@ -278,4 +281,23 @@ Sensor_TB::Sensor_TB() : Sensor_Base((int)101, (unsigned long)1000) {
     this->m_readingTypes[2] = INVALID_TYPE;
     this->m_readingTypes[3] = INVALID_TYPE;
     this->m_readingTypes[4] = INVALID_TYPE;
+}
+
+void Sensor_TB::setSettings(TurbiditySettings settings) {
+    this->settings = settings;
+
+    char cmd[MAX_SENSOR_COMMAND_LENGTH + 1];
+    snprintf(cmd, 
+             MAX_SENSOR_COMMAND_LENGTH, 
+             "setsamp %d %d", 
+             settings.numSamples, 
+             settings.msBetweenSamples);
+
+    this->sendI2CMessage(cmd);
+}
+
+void Sensor_TB::setCalibrationData(TurbidityCalibrationData calibrationData) {
+    this->calibrationData = calibrationData;
+
+    // TODO: implement sending calibration data to sensor when calibration data structure is defined
 }

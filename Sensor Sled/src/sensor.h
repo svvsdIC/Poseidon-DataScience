@@ -145,10 +145,29 @@ class Sensor_TEMP : public Sensor_Base {
         Sensor_TEMP();
 };
 
+struct TurbiditySettings {
+    int numSamples;
+    int msBetweenSamples;
+};
+
+struct TurbidityCalibrationData {
+    // Placeholder for future calibration data
+};
+
 // turbidity (TB) sensor subclass
 class Sensor_TB : public Sensor_Base {
     public:
         Sensor_TB();
+
+        void setSettings(TurbiditySettings);
+        const TurbiditySettings& getSettings() const { return settings; };
+
+        void setCalibrationData(TurbidityCalibrationData);
+        const TurbidityCalibrationData& getCalibrationData() const { return calibrationData; };
+        
+    private:
+        TurbiditySettings settings;
+        TurbidityCalibrationData calibrationData;
 };
 
 #endif // #ifndef __SENSOR_H
