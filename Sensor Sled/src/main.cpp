@@ -181,29 +181,32 @@ void loop() {
     if (Serial.available()) {
         int currentByte = 0;
 
-        while (Serial.available()) {
-            serialCommand[currentByte] = Serial.read();
+        // Wait until all data has been sent
+        String data = Serial.readStringUntil('\n');
+        data.toCharArray(serialCommand, MAX_SERIAL_COMMAND_LENGTH + 1);
 
-            currentByte++;
+        // while (Serial.available()) {
+        //     serialCommand[currentByte] = Serial.read();
 
-            if (currentByte >= MAX_SERIAL_COMMAND_LENGTH + 1)  {
-                obj_EventLogger.LogError("Serial command exceeded maximum number of characters");
-                currentByte = 0;
-                Serial.flush();
-                break; 
-            }
-        }
+        //     currentByte++;
 
-        if (serialCommand[currentByte - 1] == '\r' || serialCommand[currentByte - 1] == '\n') {
+        //     if (currentByte >= MAX_SERIAL_COMMAND_LENGTH + 1)  {
+        //         obj_EventLogger.LogError("Serial command exceeded maximum number of characters");
+        //         currentByte = 0;
+        //         Serial.flush();
+        //         break; 
+        //     }
+        // }
+
+        if (serialCommand[currentByte - 1] == '\r' || serialCommand[currentByte - 1] == '\n' || serialCommand[currentByte - 1] == '\0') {
             serialCommand[currentByte - 1] = '\0';
 
             currentByte = 0;
         
-            // TODO: add sleep command
             if (strcmp(serialCommand, "RESET") == 0) {
                 Reboot();
             }
-            // Set current board time to HH:MM:SS from serial command (f"SET_TIME {time_value}\n")
+            // Set current board time to HH:MM:SS from serial command
             if (strncmp(serialCommand, "SET_TIME ", 9) == 0) {
                 unsigned long totalSeconds = 0;
                 int hours = 0;
@@ -276,11 +279,6 @@ void loop() {
                 Serial.print(", ms Between Samples: ");
                 Serial.println(settings.msBetweenSamples);
             }
-
-            // test echo
-            Serial.print("Command recieved: ");
-            Serial.println(serialCommand);
-            Serial.println("Did: Nothing");
         }
     }
     
@@ -302,6 +300,7 @@ void loop() {
       lightbar.toggleLaser();
       lightbar.setMode(LIGHTBAR_MODE::M);
 
+      // TODO: Subtract time taken to read sensors and write to csv
       delay(period * 1000);
    }
 }

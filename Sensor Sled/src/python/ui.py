@@ -30,9 +30,7 @@ class SensorSledUI:
         self.label = ttk.Label(left_frame, text="Sensor Sled Control Panel")
         self.label.pack(pady=(0, 10))
 
-        self.sleep_button = ttk.Button(left_frame, text="Sleep Mode (wakes up on read)", command=self.sleep_mode)
-        self.sleep_button.pack()
-        self.reset_button = ttk.Button(left_frame, text="Reset Sensor Sled", command=lambda: serial_port.write(b'RESET\n'))
+        self.reset_button = ttk.Button(left_frame, text="Reset Sensor Sled", command=lambda: serial_port.write(b'RESET'))
         self.reset_button.pack()
         self.write_to_csv_button = ttk.Button(left_frame, text="Write to CSV", command=self.write_to_csv)
         self.write_to_csv_button.pack(pady=(0, 20))
@@ -64,11 +62,11 @@ class SensorSledUI:
         self.upload_turbidity_label.pack()
         self.upload_turbidity_entry = ttk.Entry(left_frame)
         self.upload_turbidity_entry.pack()
-        self.upload_turbidity_button = ttk.Button(left_frame, text="Upload Calibration Data", command=lambda: serial_port.write(f'UPLOAD_TURBIDITY_CAL {self.upload_turbidity_entry.get()}\n'.encode('utf-8')))
+        self.upload_turbidity_button = ttk.Button(left_frame, text="Upload Calibration Data", command=lambda: serial_port.write(f'UPLOAD_TURBIDITY_CAL {self.upload_turbidity_entry.get()}'.encode('utf-8')))
         self.upload_turbidity_button.pack(pady=(0, 0))
 
         # Button to get turbidity calibration data
-        self.export_turbidity_button = ttk.Button(left_frame, text="Get Calibration Data", command=lambda: serial_port.write(b'EXPORT_TURBIDITY_CAL\n'))
+        self.export_turbidity_button = ttk.Button(left_frame, text="Get Calibration Data", command=lambda: serial_port.write(b'EXPORT_TURBIDITY_CAL'))
         self.export_turbidity_button.pack(pady=(0, 20))
 
         # Entry and button to upload turbidity sample settings
@@ -76,11 +74,11 @@ class SensorSledUI:
         self.upload_turbidity_label.pack()
         self.upload_turbidity_entry = ttk.Entry(left_frame)
         self.upload_turbidity_entry.pack()
-        self.upload_turbidity_button = ttk.Button(left_frame, text="Upload Settings", command=lambda: serial_port.write(f'SET_TURBIDITY_SETTINGS {self.upload_turbidity_entry.get()}\n'.encode('utf-8')))
+        self.upload_turbidity_button = ttk.Button(left_frame, text="Upload Settings", command=lambda: serial_port.write(f'SET_TURBIDITY_SETTINGS {self.upload_turbidity_entry.get()}'.encode('utf-8')))
         self.upload_turbidity_button.pack(pady=(0, 0))
 
         # Button to retrieve turbidity sample settings
-        self.get_turbidity_button = ttk.Button(left_frame, text="Get Sample Settings", command=lambda: serial_port.write(b'GET_TURBIDITY_SETTINGS\n'))
+        self.get_turbidity_button = ttk.Button(left_frame, text="Get Sample Settings", command=lambda: serial_port.write(b'GET_TURBIDITY_SETTINGS'))
         self.get_turbidity_button.pack(pady=(0, 20))
         
         # Quit button at bottom of left frame
@@ -109,23 +107,18 @@ class SensorSledUI:
 
     def set_sensor_time(self):
         time_value = self.set_time_entry.get()
-        command = f"SET_TIME {time_value}\n"
-        self.serial_port.write(command.encode('utf-8'))
-        print("Sent command:", command.strip())
-
-    def sleep_mode(self):
-        command = "SLEEP\n"
+        command = f"SET_TIME {time_value}"
         self.serial_port.write(command.encode('utf-8'))
         print("Sent command:", command.strip())
 
     def write_to_csv(self):
-        command = "WRITE_CSV\n"
+        command = "WRITE_CSV"
         self.serial_port.write(command.encode('utf-8'))
         print("Sent command:", command.strip())
 
     def set_read_period(self):
         period_value = self.read_period_entry.get()
-        command = f"SET_READ_PERIOD {period_value}\n"
+        command = f"SET_READ_PERIOD {period_value}"
         self.serial_port.write(command.encode('utf-8'))
         print("Sent command:", command.strip())
 

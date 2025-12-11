@@ -5,7 +5,7 @@
 
 #define MAX_PARAMETER_LENGTH (24)
 
-#define MAX_SERIAL_COMMAND_LENGTH (128)
+#define MAX_SERIAL_COMMAND_LENGTH (127) // We add 1 to lengths and this aligns the data
 
 // TODO: add description
 class Serial_Command {

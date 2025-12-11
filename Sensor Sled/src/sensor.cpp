@@ -281,6 +281,39 @@ Sensor_TB::Sensor_TB() : Sensor_Base((int)101, (unsigned long)1000) {
     this->m_readingTypes[2] = INVALID_TYPE;
     this->m_readingTypes[3] = INVALID_TYPE;
     this->m_readingTypes[4] = INVALID_TYPE;
+
+    // Get default settings from sensor
+    char cmd[] = "getsamp";
+    this->sendI2CMessage(cmd);
+    char sensorData[MAX_SENSOR_DATA + 1] = "";
+    int i = 0;
+    for (int j = 0; Wire.available(); j++) { 
+        byte recievedByte = Wire.read();
+        sensorData[j] = recievedByte;
+        if (recievedByte == '\0') {
+            // end of string
+            break;
+        }
+    }
+    int numSamples = 0;
+    int msBetween = 0;
+    sscanf(sensorData, "%d,%d", &numSamples, &msBetween);
+    this->settings = {numSamples, msBetween};
+
+    // Placeholder calibration data
+    this->calibrationData = {};
+    char cmd[] = "export";
+    this->sendI2CMessage(cmd);
+    char calibrationData[MAX_SENSOR_DATA + 1] = "";
+    i = 0;
+    for (int j = 0; Wire.available(); j++) { 
+        byte recievedByte = Wire.read();
+        calibrationData[j] = recievedByte;
+        if (recievedByte == '\0') {
+            // end of string
+            break;
+        }
+    }
 }
 
 void Sensor_TB::setSettings(TurbiditySettings settings) {
@@ -299,5 +332,13 @@ void Sensor_TB::setSettings(TurbiditySettings settings) {
 void Sensor_TB::setCalibrationData(TurbidityCalibrationData calibrationData) {
     this->calibrationData = calibrationData;
 
+    char cmd[MAX_SENSOR_COMMAND_LENGTH + 1];
     // TODO: implement sending calibration data to sensor when calibration data structure is defined
-}
+    // Placeholder for future calibration data sending
+    snprintf(cmd, 
+             MAX_SENSOR_COMMAND_LENGTH, 
+             "import %s",
+             "placeholder");
+
+    this->sendI2CMessage(cmd);
+  }
